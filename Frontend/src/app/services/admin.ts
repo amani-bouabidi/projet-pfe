@@ -12,10 +12,6 @@ export class AdminService {
   private api = environment.apiUrl;
 
   constructor(private http : HttpClient){}
-// stat
-  getStats(): Observable<any> {
-    return this.http.get(`${this.api}/admin/stats`);
-  }
 
   getRecentInscriptions(): Observable<any[]> {
     return this.http.get<any[]>(`${this.api}/admin/inscriptions/recentes`);

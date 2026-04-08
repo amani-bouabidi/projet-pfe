@@ -107,6 +107,7 @@ export class AuthService {
   private startRefreshTokenTimer(): void {
     // Récupérer l'expiration du token (par défaut 24h)
     const token = this.getAccessToken();
+    console.log(token);
     if (!token) return;
 
     // Décoder le token JWT pour obtenir l'expiration

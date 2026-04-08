@@ -31,22 +31,9 @@ export class AdminDashboard implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadStats();
+
   }
 
-  loadStats(): void {
-    this.isLoading = true;
-    this.adminService.getStats().subscribe({
-      next: (data) => {
-        this.stats = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading stats', err);
-        this.isLoading = false;
-      }
-    });
-  }
 
   getInitials(name: string): string {
     if (!name) return 'A';

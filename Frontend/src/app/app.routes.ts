@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
 import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
+import { FormateurDashboard } from './pages/formateur-dashboard/formateur-dashboard';
 
 import { Apprenants } from './pages/admin/apprenants/apprenants';
 import { roleGuard } from './guard/role-guard';
@@ -21,5 +22,11 @@ export const routes: Routes = [
       { path: 'dashboard', component: AdminDashboard },
       { path: 'apprenants', component: Apprenants }
     ]
+  },
+  {
+    path: 'formateur',
+    component: FormateurDashboard,
+    canActivate: [roleGuard],
+    data: { role: 'FORMATEUR' },
   }
 ];

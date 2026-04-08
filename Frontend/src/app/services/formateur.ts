@@ -85,7 +85,5 @@ export class FormateurService {
     return this.http.delete<void>(`${this.api}/formateur/evaluations/${evaluationId}`);
   }
 
-  getStats(): Observable<any> {
-    return this.http.get(`${this.api}/formateur/stats`);
-  }
+
 }

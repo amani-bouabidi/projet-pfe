@@ -1,0 +1,107 @@
+<div class="prerequis-container">
+  <div class="header">
+    <h1>Gestion des prérequis</h1>
+    <p>Définissez les prérequis nécessaires pour chaque formation</p>
+  </div>
+
+  <div class="content-grid">
+    <!-- Colonne gauche : Liste des formations -->
+    <div class="formations-panel">
+      <div class="panel-header">
+        <h3>📚 Mes formations</h3>
+        <span class="badge">{{ formations.length }} formation(s)</span>
+      </div>
+
+      @if (isLoading) {
+        <div class="loading">Chargement...</div>
+      } @else {
+        <div class="formations-list">
+          @for (formation of formations; track formation.id) {
+            <div
+              class="formation-item"
+              [class.active]="selectedFormation?.id === formation.id"
+              (click)="onSelectFormation(formation)">
+              <div class="formation-icon">📘</div>
+              <div class="formation-info">
+                <h4>{{ formation.titre }}</h4>
+                <p>{{ formation.description | slice:0:60 }}...</p>
+              </div>
+              <div class="prerequis-count">
+                <span class="count-badge">{{ formation.prerequisCount || 0 }}</span>
+              </div>
+            </div>
+          }
+          @empty {
+            <div class="empty-state">Aucune formation assignée</div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Colonne droite : Gestion des prérequis -->
+    <div class="prerequis-panel">
+      @if (!selectedFormation) {
+        <div class="empty-selection">
+          <div class="empty-icon">📋</div>
+          <h3>Aucune formation sélectionnée</h3>
+          <p>Sélectionnez une formation pour gérer ses prérequis</p>
+        </div>
+      } @else {
+        <div class="panel-header">
+          <h3>📋 Prérequis pour : {{ selectedFormation.titre }}</h3>
+          <button class="btn-add" (click)="showAddForm = !showAddForm">
+            ➕ Ajouter un prérequis
+          </button>
+        </div>
+
+        @if (showAddForm) {
+          <div class="add-prerequis-form">
+            <div class="form-group">
+              <input
+                type="text"
+                [(ngModel)]="newPrerequis"
+                class="form-control"
+                placeholder="Ex: Connaissances de base en programmation"
+                (keyup.enter)="addPrerequis()">
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" (click)="addPrerequis()" [disabled]="!newPrerequis.trim()">
+                ✅ Ajouter
+              </button>
+              <button class="btn btn-secondary" (click)="showAddForm = false; newPrerequis = ''">
+                Annuler
+              </button>
+            </div>
+          </div>
+        }
+
+        <div class="prerequis-list">
+          <div class="list-header">
+            <span>Prérequis ({{ prerequis.length }})</span>
+          </div>
+
+          @if (prerequis.length === 0) {
+            <div class="empty-prerequis">
+              <p>Aucun prérequis défini pour cette formation</p>
+              <button class="btn-link" (click)="showAddForm = true">
+                ➕ Ajouter un prérequis
+              </button>
+            </div>
+          } @else {
+            <ul class="prerequis-items">
+              @for (prereq of prerequis; track prereq) {
+                <li class="prerequis-item">
+                  <span class="bullet">•</span>
+                  <span>{{ prereq }}</span>
+                  <button class="btn-delete" (click)="deletePrerequis(prereq)" title="Supprimer">
+                    🗑️
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

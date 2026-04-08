@@ -1,0 +1,80 @@
+<div class="apprenants-container">
+  <div class="header">
+    <div>
+      <h1>Gestion des apprenants</h1>
+      <p>Consultez et gérez les apprenants inscrits sur la plateforme</p>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-value">{{ apprenants.length }}</div>
+      <div class="stat-label">Total apprenants</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ getActiveCount() }}</div>
+      <div class="stat-label">Apprenants actifs</div>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="filterApprenants()"
+      placeholder="🔍 Rechercher un apprenant (nom, email)..."
+      class="search-input">
+  </div>
+
+  @if (isLoading) {
+    <div class="loading">Chargement des apprenants...</div>
+  } @else if (filteredApprenants.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">👨‍🎓</div>
+      <h3>Aucun apprenant trouvé</h3>
+      <p>Modifiez vos critères de recherche</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Apprenant</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Date d'inscription</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (apprenant of filteredApprenants; track apprenant.id) {
+            <tr>
+              <td class="id-cell">#{{ apprenant.id }}</td>
+              <td class="user-cell">
+                <div class="avatar">{{ getInitials(apprenant.firstName, apprenant.lastName) }}</div>
+                <div>
+                  <div class="user-name">{{ apprenant.firstName }} {{ apprenant.lastName }}</div>
+                  <div class="user-role">Apprenant</div>
+                </div>
+              </td>
+              <td>{{ apprenant.email }}</td>
+              <td>{{ apprenant.phone || '-' }}</td>
+              <td>{{ apprenant.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="status-badge" [class.active]="apprenant.isActive !== false">
+                  {{ apprenant.isActive !== false ? 'Actif' : 'Inactif' }}
+                </span>
+              </td>
+              <td class="actions">
+                <button class="btn-icon delete" (click)="deleteApprenant(apprenant.id)" title="Supprimer">🗑️</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

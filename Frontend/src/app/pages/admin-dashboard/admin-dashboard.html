@@ -1,0 +1,84 @@
+<div class="admin-dashboard">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="icon">👑</span>
+        <h2>Administration</h2>
+      </div>
+      <div class="user-info">
+        <div class="avatar">{{ getInitials(userName) }}</div>
+        <div class="user-details">
+          <p class="name">{{ userName }}</p>
+          <p class="email">{{ userEmail }}</p>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <span class="icon">📊</span>
+            <span>Tableau de bord</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/formateurs" routerLinkActive="active">
+            <span class="icon">👨‍🏫</span>
+            <span>Formateurs</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/apprenants" routerLinkActive="active">
+            <span class="icon">👨‍🎓</span>
+            <span>Apprenants</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">
+        <span class="icon">🚪</span>
+        <span>Déconnexion</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="content">
+    <div class="content-header">
+      <h1>Tableau de bord</h1>
+      <p>Bienvenue {{ userName }} ! Voici un aperçu de la plateforme.</p>
+    </div>
+
+    @if (isLoading) {
+      <div class="loading">Chargement des statistiques...</div>
+    } @else {
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👨‍🏫</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalFormateurs }}</h3>
+            <p>Formateurs</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👨‍🎓</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalApprenants }}</h3>
+            <p>Apprenants</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalFormations }}</h3>
+            <p>Formations</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

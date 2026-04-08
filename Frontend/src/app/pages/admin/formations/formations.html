@@ -1,0 +1,191 @@
+<div class="formations-container">
+  <div class="header">
+    <div>
+      <h1>Gestion des formations</h1>
+      <p>Créez, modifiez et gérez les formations de la plateforme</p>
+    </div>
+    <button class="btn-primary" (click)="openCreateModal()">
+      ➕ Nouvelle formation
+    </button>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="filterFormations()"
+        placeholder="🔍 Rechercher une formation..."
+        class="search-input">
+    </div>
+
+    <div class="categories-filter">
+      <button
+        class="category-btn"
+        [class.active]="selectedCategory === ''"
+        (click)="selectedCategory = ''; filterFormations()">
+        Toutes
+      </button>
+      @for (cat of categories; track cat) {
+        <button
+          class="category-btn"
+          [class.active]="selectedCategory === cat"
+          (click)="selectedCategory = cat; filterFormations()">
+          {{ cat }}
+        </button>
+      }
+    </div>
+
+    @if (searchTerm || selectedCategory) {
+      <button class="btn-reset" (click)="resetFilters()">
+        Réinitialiser les filtres
+      </button>
+    }
+  </div>
+
+  @if (isLoading) {
+    <div class="loading">Chargement des formations...</div>
+  } @else if (filteredFormations.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📚</div>
+      <h3>Aucune formation trouvée</h3>
+      <p>Commencez par créer votre première formation</p>
+      <button class="btn-primary" (click)="openCreateModal()">Créer une formation</button>
+    </div>
+  } @else {
+    <div class="formations-grid">
+      @for (formation of filteredFormations; track formation.id) {
+        <div class="formation-card">
+          <div class="card-header">
+            <h3>{{ formation.titre }}</h3>
+            <div class="card-actions">
+              <button class="btn-icon edit" (click)="editFormation(formation)" title="Modifier">✏️</button>
+              <button class="btn-icon delete" (click)="deleteFormation(formation.id)" title="Supprimer">🗑️</button>
+            </div>
+          </div>
+
+          <div class="card-badges">
+            @if (formation.categorie) {
+              <span class="badge category">{{ formation.categorie }}</span>
+            }
+            <span class="badge level">{{ formation.niveau || 'DÉBUTANT' }}</span>
+            <span class="badge status" [class.active]="isActive(formation)">
+              {{ isActive(formation) ? 'Active' : 'À venir' }}
+            </span>
+          </div>
+
+          <p class="description">{{ formation.description | slice:0:120 }}...</p>
+
+          <div class="card-info">
+            <div class="info-item">
+              <span class="label">⏱️ Durée</span>
+              <span class="value">{{ formation.duree }} heures</span>
+            </div>
+            <div class="info-item">
+              <span class="label">💰 Prix</span>
+              <span class="value">{{ formation.prix }} DT</span>
+            </div>
+            <div class="info-item">
+              <span class="label">👨‍🏫 Formateur</span>
+              <span class="value">{{ getFormateurName(formation.formateurId) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">📅 Période</span>
+              <span class="value">{{ formation.dateDebut | date:'dd/MM/yyyy' }} - {{ formation.dateFin | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div class="stats">
+              <span>👨‍🎓 {{ formation.inscriptionsCount || 0 }} inscrits</span>
+              <span>📊 {{ formation.modulesCount || 0 }} modules</span>
+              <span>📋 {{ formation.prerequisCount || 0 }} prérequis</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Modal Création/Modification -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal modal-lg" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editMode ? 'Modifier la formation' : 'Nouvelle formation' }}</h2>
+          <button class="close-btn" (click)="closeModal()">✖</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Titre *</label>
+            <input type="text" [(ngModel)]="formationForm.titre" class="form-control" placeholder="Titre de la formation">
+          </div>
+
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea [(ngModel)]="formationForm.description" class="form-control" rows="4" placeholder="Description détaillée de la formation"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Durée (heures) *</label>
+              <input type="number" [(ngModel)]="formationForm.duree" class="form-control" min="1">
+            </div>
+            <div class="form-group">
+              <label>Prix (DT) *</label>
+              <input type="number" [(ngModel)]="formationForm.prix" class="form-control" min="0" step="10">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Date de début *</label>
+              <input type="date" [(ngModel)]="formationForm.dateDebut" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Date de fin *</label>
+              <input type="date" [(ngModel)]="formationForm.dateFin" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Catégorie</label>
+              <input type="text" [(ngModel)]="formationForm.categorie" class="form-control" placeholder="Ex: Développement Web">
+            </div>
+            <div class="form-group">
+              <label>Niveau</label>
+              <select [(ngModel)]="formationForm.niveau" class="form-control">
+                @for (niveau of niveaux; track niveau) {
+                  <option [value]="niveau">{{ niveau }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Formateur responsable *</label>
+            <select [(ngModel)]="formationForm.formateurId" class="form-control">
+              <option [value]="null">Sélectionner un formateur</option>
+              @for (formateur of formateurs; track formateur.id) {
+                <option [value]="formateur.id">{{ formateur.firstName }} {{ formateur.lastName }} - {{ formateur.specialite }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>URL de l'image (optionnel)</label>
+            <input type="url" [(ngModel)]="formationForm.imageUrl" class="form-control" placeholder="https://...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+          <button class="btn-primary" (click)="saveFormation()">
+            {{ editMode ? 'Mettre à jour' : 'Créer' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

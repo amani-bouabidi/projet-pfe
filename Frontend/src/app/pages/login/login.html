@@ -1,0 +1,62 @@
+<div class="auth-container">
+  <app-auth-left></app-auth-left>
+
+  <div class="right-panel">
+    <div class="form-wrapper">
+      <h1>Connexion</h1>
+      <p class="subtitle" >Connectez-vous à votre compte</p>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-control"
+          [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          placeholder="exemple@email.com">
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          <div class="invalid-feedback">
+            @if (loginForm.get('email')?.errors?.['required']) { L'email est requis }
+            @if (loginForm.get('email')?.errors?.['email']) { Email invalide }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+          [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          placeholder="••••••">
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <div class="invalid-feedback">
+            @if (loginForm.get('password')?.errors?.['required']) { Le mot de passe est requis }
+            @if (loginForm.get('password')?.errors?.['minlength']) { Minimum 6 caractères }
+          </div>
+        }
+      </div>
+
+      <button type="submit" class="login-btn" [disabled]="loginForm.invalid || isLoading">
+        @if (isLoading) {
+          <span class="spinner"></span>
+        }
+        Se connecter
+      </button>
+    </form>
+
+    <div class="register-link">
+      Pas encore de compte ? <a routerLink="/register">S'inscrire</a>
+    </div>
+  </div>
+</div>

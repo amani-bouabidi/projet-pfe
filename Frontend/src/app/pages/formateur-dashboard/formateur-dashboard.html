@@ -1,0 +1,78 @@
+<div class="formateur-dashboard">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="icon">👨‍🏫</span>
+        <h2>Espace Formateur</h2>
+      </div>
+      <div class="user-info">
+        <div class="avatar">{{ getInitials(userName) }}</div>
+        <div class="user-details">
+          <p class="name">{{ userName }}</p>
+          <p class="email">{{ userEmail }}</p>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a routerLink="/formateur/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <span class="icon">📊</span>
+            <span>Tableau de bord</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/formateur/prerequis" routerLinkActive="active">
+            <span class="icon">📋</span>
+            <span>Prérequis</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">
+        <span class="icon">🚪</span>
+        <span>Déconnexion</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="content">
+    <div class="content-header">
+      <h1>Tableau de bord</h1>
+      <p>Bienvenue {{ userName }} ! Voici un aperçu de votre activité.</p>
+    </div>
+
+    @if (isLoading) {
+      <div class="loading">Chargement des statistiques...</div>
+    } @else {
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalFormations }}</h3>
+            <p>Formations</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👨‍🎓</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalApprenants }}</h3>
+            <p>Apprenants</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎥</div>
+          <div class="stat-info">
+            <h3>{{ stats.totalSessions }}</h3>
+            <p>Sessions</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -18,21 +18,26 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
+  accessToken: string;    // ✅ Changé de 'token' à 'accessToken'
+  refreshToken: string;   // ✅ Nouveau champ
   role: 'ADMIN' | 'FORMATEUR' | 'APPRENANT';
-  userId: number;
-  email: string;
-  firstName: string;
-  lastName: string;
 }
 
 export interface RegisterRequest {
+  nom: string;        // ✅ Attention: backend utilise 'nom' et 'prenom'
+  prenom: string;
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  address?: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+  message?: string;
 }
 
 export interface FormateurCreateRequest {
@@ -42,14 +47,4 @@ export interface FormateurCreateRequest {
   lastName: string;
   phone?: string;
   specialite: string;
-}
-
-export interface FormateurUpdateRequest {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  specialite?: string;
-  password?: string;
-  isActive?: boolean;
 }

@@ -47,6 +47,11 @@ export const routes: Routes = [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'apprenants', component: ApprenantsComponent },
       { path: 'formateurs', component: AdminFormateursComponent },
+      {
+  path: 'formations/:formationId',
+  loadComponent: () => import('./pages/admin/formations/detail/formation-detail')
+    .then(m => m.FormationDetailComponent)
+},
 
     ]
   },

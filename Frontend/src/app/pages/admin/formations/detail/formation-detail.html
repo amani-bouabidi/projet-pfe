@@ -1,0 +1,79 @@
+<!-- src/app/pages/admin/formations/detail/formation-detail.html -->
+<div class="formation-detail-page" *ngIf="!loading && formation">
+
+  <!-- Header -->
+  <div class="detail-header">
+    <button class="btn btn-outline-secondary" routerLink="/admin/formations">
+      ← Retour aux formations
+    </button>
+    <h1>{{ formation.titreFormation }}</h1>
+    <span class="status-badge" [ngClass]="getStatusClass(formation.statut)">
+      {{ formation.statut }}
+    </span>
+  </div>
+
+  <!-- Informations Formation -->
+  <div class="formation-info-card">
+    <h2>Informations générales</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Description</label>
+        <p>{{ formation.description || 'Aucune description disponible' }}</p>
+      </div>
+      <div class="info-row">
+        <div>
+          <label>Date de début</label>
+          <p>{{ formation.dateDebut }}</p>
+        </div>
+        <div>
+          <label>Date de fin</label>
+          <p>{{ formation.dateFin }}</p>
+        </div>
+        <div>
+          <label>Capacité</label>
+          <p>{{ formation.capacite }} apprenants</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des Modules -->
+  <div class="modules-section">
+    <div class="section-header">
+      <h2>Modules de la formation</h2>
+      <button class="btn btn-primary">+ Ajouter un module</button>
+    </div>
+
+    <div class="modules-grid">
+      <div class="module-card" *ngFor="let module of modules"
+           [routerLink]="['/admin/modules', module.id]">
+
+        <div class="module-header">
+          <h3>{{ module.titre }}</h3>
+        </div>
+
+        <p class="module-description">
+          {{ module.description | slice:0:150 }}{{ module.description?.length > 150 ? '...' : '' }}
+        </p>
+
+        <div class="module-footer">
+          <span class="module-count">
+            {{ module.documents?.length || 0 }} documents •
+            {{ module.videos?.length || 0 }} vidéos
+          </span>
+          <i class="fas fa-arrow-right"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-modules" *ngIf="modules.length === 0">
+      <p>Aucun module n'a encore été créé pour cette formation.</p>
+      <button class="btn btn-primary">Créer le premier module</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading" *ngIf="loading">
+  <p>Chargement des détails de la formation...</p>
+</div>

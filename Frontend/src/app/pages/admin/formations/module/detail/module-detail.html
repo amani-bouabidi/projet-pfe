@@ -1,0 +1,68 @@
+<!-- src/app/pages/admin/formations/module/detail/module-detail.html -->
+<div class="module-detail-page" *ngIf="!loading && module">
+
+  <!-- Header -->
+  <div class="detail-header">
+    <button class="btn btn-outline-secondary" routerLink="/admin/formations">
+      ← Retour aux formations
+    </button>
+    <h1>{{ module.moduleTitre }}</h1>
+  </div>
+
+  <!-- Documents Section -->
+  <div class="resources-section">
+    <div class="section-header">
+      <h2>Documents</h2>
+      <label class="btn btn-success btn-sm upload-btn">
+        + Ajouter Document
+        <input type="file" (change)="onDocumentSelected($event)" hidden accept=".pdf,.doc,.docx,.ppt,.pptx">
+      </label>
+    </div>
+
+    <div class="resources-list">
+      <div class="resource-item" *ngFor="let doc of documents">
+        <i class="fas fa-file-pdf resource-icon"></i>
+        <div class="resource-info">
+          <span class="resource-name">{{ doc.nom }}</span>
+          <span class="resource-type">Document</span>
+        </div>
+        <a [href]="doc.filePath" target="_blank" class="btn btn-sm btn-outline-primary">Télécharger</a>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="documents.length === 0">
+      Aucun document pour ce module.
+    </div>
+  </div>
+
+  <!-- Videos Section -->
+  <div class="resources-section">
+    <div class="section-header">
+      <h2>Vidéos</h2>
+      <label class="btn btn-success btn-sm upload-btn">
+        + Ajouter Vidéo
+        <input type="file" (change)="onVideoSelected($event)" hidden accept="video/*">
+      </label>
+    </div>
+
+    <div class="resources-list">
+      <div class="resource-item" *ngFor="let video of videos">
+        <i class="fas fa-video resource-icon"></i>
+        <div class="resource-info">
+          <span class="resource-name">{{ video.titre }}</span>
+          <span class="resource-type">Vidéo</span>
+        </div>
+        <a [href]="video.filePath" target="_blank" class="btn btn-sm btn-outline-primary">Regarder</a>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="videos.length === 0">
+      Aucune vidéo pour ce module.
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading" *ngIf="loading">
+  <p>Chargement du contenu du module...</p>
+</div>

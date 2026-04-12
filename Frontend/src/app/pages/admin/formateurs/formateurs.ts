@@ -1,155 +1,413 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
-import { MatSortModule, MatSort } from '@angular/material/sort';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { AdminService } from '../../../services/admin';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AdminService, UtilisateurResponseDTO, UtilisateurCreationDTO } from '../../../services/admin';
 
 @Component({
-  selector: 'app-formateurs',
+  selector: 'app-admin-formateurs',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatChipsModule,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
-    MatDialogModule
-  ],
-  templateUrl: './formateurs.html',
-  styleUrls: ['./formateurs.scss']
+  imports: [CommonModule, ReactiveFormsModule],
+  template: `
+    <div class="formateurs-container">
+      <div class="page-header">
+        <h1>Gestion des Formateurs</h1>
+        <button class="btn-add" (click)="openCreateModal()">+ Nouveau Formateur</button>
+      </div>
+
+      <!-- Create/Edit Modal -->
+      <div class="modal" [class.show]="showModal" (click)="closeModalOnBackdrop($event)">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>{{ editingFormateur ? 'Modifier Formateur' : 'Ajouter Formateur' }}</h2>
+            <span class="close" (click)="closeModal()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="formateurForm" (ngSubmit)="onSubmit()">
+              <div class="form-group">
+                <label>Nom *</label>
+                <input type="text" formControlName="nom" placeholder="Nom du formateur">
+                <div class="error" *ngIf="formateurForm.get('nom')?.invalid && formateurForm.get('nom')?.touched">
+                  Nom requis
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Prénom *</label>
+                <input type="text" formControlName="prenom" placeholder="Prénom du formateur">
+                <div class="error" *ngIf="formateurForm.get('prenom')?.invalid && formateurForm.get('prenom')?.touched">
+                  Prénom requis
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" formControlName="email" placeholder="email@exemple.com">
+                <div class="error" *ngIf="formateurForm.get('email')?.invalid && formateurForm.get('email')?.touched">
+                  Email valide requis
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="!editingFormateur">
+                <label>Mot de passe *</label>
+                <input type="password" formControlName="password" placeholder="Minimum 8 caractères">
+                <div class="error" *ngIf="formateurForm.get('password')?.invalid && formateurForm.get('password')?.touched">
+                  Mot de passe requis (min 8 caractères)
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="editingFormateur">
+                <label>Nouveau mot de passe (optionnel)</label>
+                <input type="password" formControlName="password" placeholder="Laisser vide pour ne pas changer">
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn-cancel" (click)="closeModal()">Annuler</button>
+                <button type="submit" class="btn-submit" [disabled]="formateurForm.invalid">
+                  {{ editingFormateur ? 'Mettre à jour' : 'Créer' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formateurs List -->
+      <div class="formateurs-list">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Statut</th>
+                <th>Date création</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let formateur of formateurs">
+                <td>{{ formateur.id }}</td>
+                <td>{{ formateur.nom }}</td>
+                <td>{{ formateur.prenom }}</td>
+                <td>{{ formateur.email }}</td>
+                <td>
+                  <span class="badge" [class.active]="formateur.actif">
+                    {{ formateur.actif ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td>{{ formateur.createdAt | date:'dd/MM/yyyy' }}</td>
+                <td class="actions">
+                  <button class="btn-edit" (click)="editFormateur(formateur)">✏️</button>
+                  <button class="btn-delete" (click)="deleteFormateur(formateur.id)">🗑️</button>
+                </td>
+              </tr>
+              <tr *ngIf="formateurs.length === 0">
+                <td colspan="7" class="no-data">Aucun formateur trouvé</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .formateurs-container {
+      padding: 2rem;
+      background: #f5f7fa;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      color: #333;
+      font-size: 28px;
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.3s;
+    }
+
+    .btn-add:hover {
+      transform: translateY(-2px);
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      overflow-x: auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+      background: #f8f9fa;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      background: #dc3545;
+      color: white;
+    }
+
+    .badge.active {
+      background: #28a745;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-edit, .btn-delete {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    .btn-edit:hover {
+      background: #e3f2fd;
+    }
+
+    .btn-delete:hover {
+      background: #ffebee;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #999;
+      padding: 2rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #333;
+    }
+
+    .close {
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .error {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .btn-cancel {
+      padding: 8px 16px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  `]
 })
-export class FormateursComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'nom', 'email', 'phone', 'specialite', 'statut', 'date', 'actions'];
-  dataSource = new MatTableDataSource<any>([]);
-  searchTerm = '';
-  isLoading = true;
-  editMode = false;
-  selectedFormateur: any = null;
-
+export class AdminFormateursComponent implements OnInit {
+  formateurs: UtilisateurResponseDTO[] = [];
+  showModal = false;
+  editingFormateur: UtilisateurResponseDTO | null = null;
   formateurForm: FormGroup;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('formModal') formModal: any;
 
   constructor(
     private adminService: AdminService,
-    private fb: FormBuilder,
-    private dialog: MatDialog
+    private fb: FormBuilder
   ) {
     this.formateurForm = this.fb.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+      nom: ['', Validators.required],
+      prenom: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-      specialite: ['', Validators.required],
-      password: ['', [Validators.minLength(6)]]
+      password: ['', this.editingFormateur ? [] : [Validators.required, Validators.minLength(8)]]
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.loadFormateurs();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  loadFormateurs(): void {
-    this.isLoading = true;
-    this.adminService.getFormateurs().subscribe({
-      next: (data) => {
-        this.dataSource.data = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading formateurs', err);
-        this.isLoading = false;
-      }
+  loadFormateurs() {
+    this.adminService.listerFormateurs().subscribe({
+      next: (data) => this.formateurs = data,
+      error: (err) => console.error('Error loading formateurs:', err)
     });
   }
 
-  filterFormateurs(): void {
-    this.dataSource.filter = this.searchTerm.trim().toLowerCase();
-  }
-
-  openFormModal(): void {
-    this.editMode = false;
-    this.selectedFormateur = null;
+  openCreateModal() {
+    this.editingFormateur = null;
     this.formateurForm.reset();
-    this.dialog.open(this.formModal, { width: '500px' });
+    this.formateurForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+    this.formateurForm.get('password')?.updateValueAndValidity();
+    this.showModal = true;
   }
 
-  editFormateur(formateur: any): void {
-    this.editMode = true;
-    this.selectedFormateur = formateur;
+  editFormateur(formateur: UtilisateurResponseDTO) {
+    this.editingFormateur = formateur;
     this.formateurForm.patchValue({
-      firstName: formateur.firstName,
-      lastName: formateur.lastName,
+      nom: formateur.nom,
+      prenom: formateur.prenom,
       email: formateur.email,
-      phone: formateur.phone || '',
-      specialite: formateur.specialite,
       password: ''
     });
-    this.dialog.open(this.formModal, { width: '500px' });
+    this.formateurForm.get('password')?.clearValidators();
+    this.formateurForm.get('password')?.updateValueAndValidity();
+    this.showModal = true;
   }
 
-  saveFormateur(): void {
+  closeModal() {
+    this.showModal = false;
+    this.editingFormateur = null;
+    this.formateurForm.reset();
+  }
+
+  closeModalOnBackdrop(event: MouseEvent) {
+    if ((event.target as HTMLElement).classList.contains('modal')) {
+      this.closeModal();
+    }
+  }
+
+  onSubmit() {
     if (this.formateurForm.invalid) return;
 
-    if (this.editMode && this.selectedFormateur) {
-      const updateData = { ...this.formateurForm.value };
-      if (!updateData.password) delete updateData.password;
+    const data = this.formateurForm.value;
+    data.roleNom = 'FORMATEUR';
 
-      this.adminService.updateFormateur(this.selectedFormateur.id, updateData).subscribe({
+    if (this.editingFormateur) {
+      this.adminService.modifierFormateur(this.editingFormateur.id, data).subscribe({
         next: () => {
           this.loadFormateurs();
-          this.dialog.closeAll();
+          this.closeModal();
         },
-        error: (err) => console.error('Error updating formateur', err)
+        error: (err) => console.error('Error updating formateur:', err)
       });
     } else {
-      this.adminService.createFormateur(this.formateurForm.value).subscribe({
+      this.adminService.creerFormateur(data).subscribe({
         next: () => {
           this.loadFormateurs();
-          this.dialog.closeAll();
+          this.closeModal();
         },
-        error: (err) => console.error('Error creating formateur', err)
+        error: (err) => console.error('Error creating formateur:', err)
       });
     }
   }
 
-  deleteFormateur(id: number): void {
+  deleteFormateur(id: number) {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce formateur ?')) {
-      this.adminService.deleteFormateur(id).subscribe({
+      this.adminService.supprimerFormateur(id).subscribe({
         next: () => this.loadFormateurs(),
-        error: (err) => console.error('Error deleting formateur', err)
+        error: (err) => console.error('Error deleting formateur:', err)
       });
     }
-  }
-
-  getInitials(firstName: string, lastName: string): string {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   }
 }

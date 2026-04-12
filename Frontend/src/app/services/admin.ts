@@ -1,109 +1,65 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment.prod';
-import { Formation } from '../models/formation';
-import { Utilisateur } from '../models/user';
+import { environment } from '../../environments/environment';
+
+export interface UtilisateurCreationDTO {
+  nom: string;
+  prenom: string;
+  email: string;
+  password: string;
+  roleNom: string;
+}
+
+export interface UtilisateurUpdateDTO {
+  nom?: string;
+  prenom?: string;
+  email?: string;
+  password?: string;
+  roleNom?: string;
+}
+
+export interface UtilisateurResponseDTO {
+  id: number;
+  nom: string;
+  prenom: string;
+  email: string;
+  roleNom: string;
+  actif: boolean;
+  createdAt: string;
+}
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AdminService {
-  private api = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/admin`;
 
-  constructor(private http : HttpClient){}
+  constructor(private http: HttpClient) {}
 
-  getRecentInscriptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.api}/admin/inscriptions/recentes`);
+  // Formateur CRUD
+  creerFormateur(data: UtilisateurCreationDTO): Observable<UtilisateurResponseDTO> {
+    return this.http.post<UtilisateurResponseDTO>(`${this.apiUrl}/formateurs`, data);
   }
 
-  //formateurs - sprint 1
-
-  getFormateurs(): Observable<Utilisateur[]> {
-    return this.http.get<Utilisateur[]>(`${this.api}/admin/formateurs`);
+  modifierFormateur(id: number, data: UtilisateurUpdateDTO): Observable<UtilisateurResponseDTO> {
+    return this.http.put<UtilisateurResponseDTO>(`${this.apiUrl}/formateurs/${id}`, data);
   }
 
-  getFormateurById(id: number): Observable<Utilisateur> {
-    return this.http.get<Utilisateur>(`${this.api}/admin/formateurs/${id}`);
+  supprimerFormateur(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/formateurs/${id}`);
   }
 
-  createFormateur(data: Partial<Utilisateur> & { password: string; specialite: string }): Observable<Utilisateur> {
-    return this.http.post<Utilisateur>(`${this.api}/admin/formateurs`, data);
+  listerFormateurs(): Observable<UtilisateurResponseDTO[]> {
+    return this.http.get<UtilisateurResponseDTO[]>(`${this.apiUrl}/formateurs`);
   }
 
-  updateFormateur(id: number, data: Partial<Utilisateur>): Observable<Utilisateur> {
-    return this.http.put<Utilisateur>(`${this.api}/admin/formateurs/${id}`, data);
+  // Apprenant CRUD
+  supprimerApprenant(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/apprenants/${id}`);
   }
 
-  deleteFormateur(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/admin/formateurs/${id}`);
+  listerApprenants(): Observable<UtilisateurResponseDTO[]> {
+    return this.http.get<UtilisateurResponseDTO[]>(`${this.apiUrl}/apprenants`);
   }
-
-  //apprenants - sprint 1
-
-
-  getApprenantById(id: number): Observable<Utilisateur> {
-    return this.http.get<Utilisateur>(`${this.api}/admin/apprenants/${id}`);
-  }
-
-  deleteApprenant(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/admin/apprenants/${id}`);
-  }
-
-  //formations - sprint 2
-
-  getFormations(): Observable<Formation[]> {
-    return this.http.get<Formation[]>(`${this.api}/admin/formations`);
-  }
-
-  getFormationById(id: number): Observable<Formation> {
-    return this.http.get<Formation>(`${this.api}/admin/formations/${id}`);
-  }
-
-  createFormation(data: Partial<Formation>): Observable<Formation> {
-    return this.http.post<Formation>(`${this.api}/admin/formations`, data);
-  }
-
-  updateFormation(id: number, data: Partial<Formation>): Observable<Formation> {
-    return this.http.put<Formation>(`${this.api}/admin/formations/${id}`, data);
-  }
-
-  deleteFormation(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/admin/formations/${id}`);
-  }
-
-  //
-
-  getApprenantsEligiblesAttestation(formationId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.api}/admin/formations/${formationId}/apprenants-eligibles`);
-  }
-
-  generateAttestation(formationId: number, apprenantId: number): Observable<Blob> {
-    return this.http.post(`${this.api}/admin/attestations/generate`,
-      { formationId, apprenantId },
-      { responseType: 'blob' }
-    );
-  }
-
-  generateMultipleAttestations(formationId: number, apprenantIds: number[]): Observable<Blob> {
-    return this.http.post(`${this.api}/admin/attestations/generate-multiple`,
-      { formationId, apprenantIds },
-      { responseType: 'blob' }
-    );
-  }
-
-  //categorie
-
-  getCategories(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.api}/admin/categories`);
-  }
-
-  createCategory(nom: string): Observable<any> {
-    return this.http.post(`${this.api}/admin/categories`, { nom });
-  }
-
-  deleteCategory(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/admin/categories/${id}`);
-  }
-
 }

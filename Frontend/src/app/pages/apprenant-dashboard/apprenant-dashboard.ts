@@ -80,6 +80,6 @@ export class ApprenantDashboard implements OnInit {
   }
 
   ngOnInit(): void {
-      
+
   }
 }

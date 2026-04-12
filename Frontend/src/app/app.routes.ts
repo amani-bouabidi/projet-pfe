@@ -4,10 +4,10 @@ import { RegisterComponent } from './pages/register/register';
 import { RoleGuard } from './guard/role-guard';
 
 // Admin Components
-import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard';
 import { ApprenantsComponent } from './pages/admin/apprenants/apprenants';
-import { FormateursComponent } from './pages/admin/formateurs/formateurs';
-import { FormationsComponent } from './pages/admin/formations/formations';
+import { AdminFormateursComponent } from './pages/admin/formateurs/formateurs';
+import {  } from './pages/admin/formations/formations';
 
 // Formateur Components
 import { FormateurDashboard } from './pages/formateur-dashboard/formateur-dashboard';
@@ -44,10 +44,10 @@ export const routes: Routes = [
     data: { roles: ['ADMIN'] },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: AdminDashboard },
+      { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'apprenants', component: ApprenantsComponent },
-      { path: 'formateurs', component: FormateursComponent },
-      { path: 'formations', component: FormationsComponent }
+      { path: 'formateurs', component: AdminFormateursComponent },
+
     ]
   },
 

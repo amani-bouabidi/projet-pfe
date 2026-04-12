@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.prod';
 import { Formation } from '../models/formation';
-import { User } from '../models/user';
+import { Utilisateur } from '../models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -19,20 +19,20 @@ export class AdminService {
 
   //formateurs - sprint 1
 
-  getFormateurs(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.api}/admin/formateurs`);
+  getFormateurs(): Observable<Utilisateur[]> {
+    return this.http.get<Utilisateur[]>(`${this.api}/admin/formateurs`);
   }
 
-  getFormateurById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.api}/admin/formateurs/${id}`);
+  getFormateurById(id: number): Observable<Utilisateur> {
+    return this.http.get<Utilisateur>(`${this.api}/admin/formateurs/${id}`);
   }
 
-  createFormateur(data: Partial<User> & { password: string; specialite: string }): Observable<User> {
-    return this.http.post<User>(`${this.api}/admin/formateurs`, data);
+  createFormateur(data: Partial<Utilisateur> & { password: string; specialite: string }): Observable<Utilisateur> {
+    return this.http.post<Utilisateur>(`${this.api}/admin/formateurs`, data);
   }
 
-  updateFormateur(id: number, data: Partial<User>): Observable<User> {
-    return this.http.put<User>(`${this.api}/admin/formateurs/${id}`, data);
+  updateFormateur(id: number, data: Partial<Utilisateur>): Observable<Utilisateur> {
+    return this.http.put<Utilisateur>(`${this.api}/admin/formateurs/${id}`, data);
   }
 
   deleteFormateur(id: number): Observable<void> {
@@ -41,12 +41,9 @@ export class AdminService {
 
   //apprenants - sprint 1
 
-  getApprenants(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.api}/admin/apprenants`);
-  }
 
-  getApprenantById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.api}/admin/apprenants/${id}`);
+  getApprenantById(id: number): Observable<Utilisateur> {
+    return this.http.get<Utilisateur>(`${this.api}/admin/apprenants/${id}`);
   }
 
   deleteApprenant(id: number): Observable<void> {

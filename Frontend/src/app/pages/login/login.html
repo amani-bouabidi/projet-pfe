@@ -1,62 +1,62 @@
-<div class="auth-container">
-  <app-auth-left></app-auth-left>
+<div class="login-container">
+  <div class="login-wrapper">
+    <app-auth-left></app-auth-left>
 
-  <div class="right-panel">
-    <div class="form-wrapper">
-      <h1>Connexion</h1>
-      <p class="subtitle">Connectez-vous à votre compte</p>
-
-      @if (errorMessage) {
-        <div class="alert alert-danger">
-          {{ errorMessage }}
+    <div class="login-form-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h2>Connexion</h2>
+          <p>Bienvenue ! Veuillez vous connecter</p>
         </div>
-      }
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            formControlName="email"
-            class="form-control"
-            [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-            placeholder="exemple@email.com">
-          @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-            <div class="invalid-feedback">
-              @if (loginForm.get('email')?.errors?.['required']) { L'email est requis }
-              @if (loginForm.get('email')?.errors?.['email']) { Email invalide }
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-group">
+              <i class="icon-envelope"></i>
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                placeholder="Entrez votre email"
+                [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
             </div>
-          }
-        </div>
-
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input
-            type="password"
-            id="password"
-            formControlName="password"
-            class="form-control"
-            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-            placeholder="••••••">
-          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-            <div class="invalid-feedback">
-              @if (loginForm.get('password')?.errors?.['required']) { Le mot de passe est requis }
-              @if (loginForm.get('password')?.errors?.['minlength']) { Minimum 6 caractères }
+            <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+              <span *ngIf="loginForm.get('email')?.errors?.['required']">Email requis</span>
+              <span *ngIf="loginForm.get('email')?.errors?.['email']">Email valide requis</span>
             </div>
-          }
-        </div>
+          </div>
 
-        <button type="submit" class="login-btn" [disabled]="loginForm.invalid || isLoading">
-          @if (isLoading) {
-            <span class="spinner"></span>
-          }
-          Se connecter
-        </button>
-      </form>
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="input-group">
+              <i class="icon-lock"></i>
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="password"
+                formControlName="password"
+                placeholder="Entrez votre mot de passe"
+                [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              <i class="icon-eye" (click)="togglePasswordVisibility()"></i>
+            </div>
+            <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              <span *ngIf="loginForm.get('password')?.errors?.['required']">Mot de passe requis</span>
+              <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Minimum 6 caractères</span>
+            </div>
+          </div>
 
-      <div class="register-link">
-        Pas encore de compte ? <a routerLink="/register">S'inscrire</a>
+          <div class="error-message" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <button type="submit" class="btn-login" [disabled]="loginForm.invalid || isLoading">
+            {{ isLoading ? 'Connexion...' : 'Se connecter' }}
+          </button>
+
+          <div class="register-link">
+            <p>Pas encore de compte ? <a routerLink="/register">S'inscrire</a></p>
+          </div>
+        </form>
       </div>
     </div>
   </div>

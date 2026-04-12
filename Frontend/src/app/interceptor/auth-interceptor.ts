@@ -12,21 +12,16 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Ne pas ajouter le token pour les endpoints d'auth
-    if (req.url.includes('/auth/login') || req.url.includes('/auth/register')) {
-      return next.handle(req);
-    }
-
-    const token = this.authService.getAccessToken();
+    const accessToken = this.authService.getAccessToken();
     let authReq = req;
 
-    if (token) {
-      authReq = this.addTokenToRequest(req, token);
+    if (accessToken) {
+      authReq = this.addTokenToRequest(req, accessToken);
     }
 
     return next.handle(authReq).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && !req.url.includes('/auth/refresh')) {
+      catchError(error => {
+        if (error instanceof HttpErrorResponse && error.status === 401) {
           return this.handle401Error(authReq, next);
         }
         return throwError(() => error);
@@ -50,13 +45,13 @@ export class AuthInterceptor implements HttpInterceptor {
       return this.authService.refreshToken().pipe(
         switchMap((response: any) => {
           this.isRefreshing = false;
-          this.refreshTokenSubject.next(response.accessToken);
-          return next.handle(this.addTokenToRequest(request, response.accessToken));
+          this.refreshTokenSubject.next(response.jwt);
+          return next.handle(this.addTokenToRequest(request, response.jwt));
         }),
-        catchError((err) => {
+        catchError(error => {
           this.isRefreshing = false;
-          this.authService.logout();
-          return throwError(() => err);
+          this.authService.logout().subscribe();
+          return throwError(() => error);
         })
       );
     } else {

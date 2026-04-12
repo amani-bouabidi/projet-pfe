@@ -8,7 +8,7 @@ import { AuthService } from './auth';
 })
 export class ApiService {
   private api = environment.apiUrl;
-  
+
   constructor(
     private http: HttpClient,
     private auth: AuthService
@@ -26,9 +26,6 @@ export class ApiService {
     return this.http.get<any[]>(`${this.api}/formateur/courses`);
   }
 
-  getMyCourses(): Observable<any[]> {
-    const userId = this.auth.getUserId();
-    return this.http.get<any[]>(`${this.api}/apprenant/${userId}/courses`);
-  }
+  
 }
 

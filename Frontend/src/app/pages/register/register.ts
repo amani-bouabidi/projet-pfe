@@ -1,31 +1,43 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, FormsModule , ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 import { AuthLeft } from '../../components/auth-left/auth-left';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AuthLeft],
+  imports: [CommonModule,
+          ReactiveFormsModule, FormsModule,
+           AuthLeft],
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
-export class RegisterComponent {
-  registerForm: FormGroup;
-  isLoading = false;
-  successMessage = '';
-  errorMessage = '';
+export class RegisterComponent implements OnInit {
+  registerForm!: FormGroup;
+  errorMessage: string = '';
+  successMessage: string = '';
+  isLoading: boolean = false;
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/']);
+    }
+    this.initForm();
+  }
+
+  private initForm(): void {
     this.registerForm = this.fb.group({
-      prenom: ['', [Validators.required, Validators.minLength(2)]],  // ✅ 'prenom' pour backend
-      nom: ['', [Validators.required, Validators.minLength(2)]],     // ✅ 'nom' pour backend
+      nom: ['', [Validators.required, Validators.minLength(2)]],
+      prenom: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
@@ -39,7 +51,12 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.registerForm.invalid) return;
+    if (this.registerForm.invalid) {
+      Object.keys(this.registerForm.controls).forEach(key => {
+        this.registerForm.get(key)?.markAsTouched();
+      });
+      return;
+    }
 
     this.isLoading = true;
     this.errorMessage = '';
@@ -48,17 +65,24 @@ export class RegisterComponent {
     const { confirmPassword, ...registerData } = this.registerForm.value;
 
     this.authService.register(registerData).subscribe({
-      next: () => {
-        this.successMessage = 'Inscription réussie ! Redirection vers la connexion...';
+      next: (response: any) => {
+        this.successMessage = response || 'Compte créé avec succès !';
         setTimeout(() => {
           this.router.navigate(['/login']);
-        }, 3000);
-        this.isLoading = false;
+        }, 2000);
       },
       error: (error) => {
-        this.errorMessage = error.error?.message || 'Une erreur est survenue';
+        this.errorMessage = error.message;
         this.isLoading = false;
       }
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

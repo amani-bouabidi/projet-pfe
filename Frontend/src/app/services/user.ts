@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { User } from '../models/user';
+import { Utilisateur } from '../models/user';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -10,22 +10,22 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getCurrentUser(endpoint: string): Observable<User> {
-    return this.http.get<User>(`${this.api}${endpoint}`);
+  getCurrentUser(endpoint: string): Observable<Utilisateur> {
+    return this.http.get<Utilisateur>(`${this.api}${endpoint}`);
   }
 
   // Pour admin
-  getAdminInfo(): Observable<User> {
-    return this.http.get<User>(`${this.api}/admin/me`);
+  getAdminInfo(): Observable<Utilisateur> {
+    return this.http.get<Utilisateur>(`${this.api}/admin/me`);
   }
 
   // Pour formateur
-  getFormateurInfo(): Observable<User> {
-    return this.http.get<User>(`${this.api}/formateur/me`);
+  getFormateurInfo(): Observable<Utilisateur> {
+    return this.http.get<Utilisateur>(`${this.api}/formateur/me`);
   }
 
   // Pour apprenant
-  getApprenantInfo(): Observable<User> {
-    return this.http.get<User>(`${this.api}/apprenant/me`);
+  getApprenantInfo(): Observable<Utilisateur> {
+    return this.http.get<Utilisateur>(`${this.api}/apprenant/me`);
   }
 }

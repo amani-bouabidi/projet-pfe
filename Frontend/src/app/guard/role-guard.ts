@@ -1,35 +1,39 @@
-import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { Router, ActivatedRouteSnapshot, CanActivate } from '@angular/router';
 import { AuthService } from '../services/auth';
 
-export const roleGuard: CanActivateFn = (route) => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
-  const expectedRole = route.data['role'];
+@Injectable({
+  providedIn: 'root'
+})
+export class RoleGuard implements CanActivate {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  if (!auth.isLoggedIn()) {
-    router.navigate(['/login']);
+  canActivate(route: ActivatedRouteSnapshot): boolean {
+    const expectedRoles = route.data['roles'] as Array<string>;
+    const userRole = this.authService.getUserRole();
+
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return false;
+    }
+
+    if (expectedRoles && userRole && expectedRoles.includes(userRole)) {
+      return true;
+    }
+
+    // Redirect based on role
+    if (userRole === 'ADMIN') {
+      this.router.navigate(['/admin/dashboard']);
+    } else if (userRole === 'FORMATEUR') {
+      this.router.navigate(['/formateur/dashboard']);
+    } else if (userRole === 'APPRENANT') {
+      this.router.navigate(['/apprenant/dashboard']);
+    } else {
+      this.router.navigate(['/login']);
+    }
     return false;
   }
-
-  const userRole = auth.getRole();
-
-  if (userRole === expectedRole) {
-    return true;
-  }
-
-  switch(userRole) {
-    case 'ADMIN':
-      router.navigate(['/admin']);
-      break;
-    case 'FORMATEUR':
-      router.navigate(['/formateur']);
-      break;
-    case 'APPRENANT':
-      router.navigate(['/apprenant']);
-      break;
-    default:
-      router.navigate(['/login']);
-  }
-  return false;
-};
+}

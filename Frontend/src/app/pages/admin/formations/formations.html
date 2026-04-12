@@ -1,191 +1,181 @@
 <div class="formations-container">
+  <!-- En-tête -->
   <div class="header">
-    <div>
+    <div class="header-title">
       <h1>Gestion des formations</h1>
       <p>Créez, modifiez et gérez les formations de la plateforme</p>
     </div>
-    <button class="btn-primary" (click)="openCreateModal()">
-      ➕ Nouvelle formation
+    <button mat-raised-button color="primary" (click)="openFormModal()">
+      <mat-icon>add</mat-icon>
+      Nouvelle formation
     </button>
   </div>
 
   <!-- Filtres -->
-  <div class="filters-section">
-    <div class="search-box">
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        (input)="filterFormations()"
-        placeholder="🔍 Rechercher une formation..."
-        class="search-input">
-    </div>
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-row">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Rechercher</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (input)="filterFormations()" placeholder="Titre, description...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
 
-    <div class="categories-filter">
-      <button
-        class="category-btn"
-        [class.active]="selectedCategory === ''"
-        (click)="selectedCategory = ''; filterFormations()">
-        Toutes
-      </button>
-      @for (cat of categories; track cat) {
-        <button
-          class="category-btn"
-          [class.active]="selectedCategory === cat"
-          (click)="selectedCategory = cat; filterFormations()">
-          {{ cat }}
+        <mat-form-field appearance="outline" class="category-filter">
+          <mat-label>Catégorie</mat-label>
+          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="filterFormations()">
+            <mat-option value="">Toutes</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button (click)="resetFilters()">
+          <mat-icon>refresh</mat-icon>
+          Réinitialiser
         </button>
-      }
-    </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-    @if (searchTerm || selectedCategory) {
-      <button class="btn-reset" (click)="resetFilters()">
-        Réinitialiser les filtres
-      </button>
-    }
+  <!-- Chargement -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+      <p>Chargement des formations...</p>
   </div>
 
-  @if (isLoading) {
-    <div class="loading">Chargement des formations...</div>
-  } @else if (filteredFormations.length === 0) {
-    <div class="empty-state">
-      <div class="empty-icon">📚</div>
-      <h3>Aucune formation trouvée</h3>
-      <p>Commencez par créer votre première formation</p>
-      <button class="btn-primary" (click)="openCreateModal()">Créer une formation</button>
+  <!-- Liste des formations -->
+  <div class="formations-grid" *ngIf="!isLoading">
+    <mat-card class="formation-card" *ngFor="let formation of filteredFormations">
+      <mat-card-header>
+        <mat-card-title>{{ formation.titre }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip>{{ formation.categorie || 'Général' }}</mat-chip>
+          <mat-chip [color]="isActive(formation) ? 'primary' : 'warn'" highlighted>
+            {{ isActive(formation) ? 'Active' : 'Terminée' }}
+          </mat-chip>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="description">{{ formation.description | slice:0:120 }}...</p>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">⏱️ Durée</span>
+            <span class="value">{{ formation.duree }} heures</span>
+          </div>
+          <div class="info-item">
+            <span class="label">👨‍🏫 Formateur</span>
+            <span class="value">{{ getFormateurName(formation.formateurId) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">📅 Période</span>
+            <span class="value">{{ formation.dateDebut | date:'dd/MM/yyyy' }} - {{ formation.dateFin | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">🎓 Niveau</span>
+            <span class="value">{{ formation.niveau || 'Débutant' }}</span>
+          </div>
+        </div>
+        <div class="stats">
+          <span>👨‍🎓 {{ formation.inscriptionsCount || 0 }} inscrits</span>
+          <span>📊 {{ formation.modulesCount || 0 }} modules</span>
+          <span>📋 {{ formation.prerequisCount || 0 }} prérequis</span>
+        </div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-icon-button color="primary" (click)="editFormation(formation)" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteFormation(formation.id)" matTooltip="Supprimer">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <div class="empty-state" *ngIf="filteredFormations.length === 0">
+      <mat-icon>menu_book</mat-icon>
+      <p>Aucune formation trouvée</p>
+      <button mat-stroked-button color="primary" (click)="openFormModal()">Créer une formation</button>
     </div>
-  } @else {
-    <div class="formations-grid">
-      @for (formation of filteredFormations; track formation.id) {
-        <div class="formation-card">
-          <div class="card-header">
-            <h3>{{ formation.titre }}</h3>
-            <div class="card-actions">
-              <button class="btn-icon edit" (click)="editFormation(formation)" title="Modifier">✏️</button>
-              <button class="btn-icon delete" (click)="deleteFormation(formation.id)" title="Supprimer">🗑️</button>
-            </div>
-          </div>
-
-          <div class="card-badges">
-            @if (formation.categorie) {
-              <span class="badge category">{{ formation.categorie }}</span>
-            }
-            <span class="badge level">{{ formation.niveau || 'DÉBUTANT' }}</span>
-            <span class="badge status" [class.active]="isActive(formation)">
-              {{ isActive(formation) ? 'Active' : 'À venir' }}
-            </span>
-          </div>
-
-          <p class="description">{{ formation.description | slice:0:120 }}...</p>
-
-          <div class="card-info">
-            <div class="info-item">
-              <span class="label">⏱️ Durée</span>
-              <span class="value">{{ formation.duree }} heures</span>
-            </div>
-            <div class="info-item">
-              <span class="label">💰 Prix</span>
-              <span class="value">{{ formation.prix }} DT</span>
-            </div>
-            <div class="info-item">
-              <span class="label">👨‍🏫 Formateur</span>
-              <span class="value">{{ getFormateurName(formation.formateurId) }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">📅 Période</span>
-              <span class="value">{{ formation.dateDebut | date:'dd/MM/yyyy' }} - {{ formation.dateFin | date:'dd/MM/yyyy' }}</span>
-            </div>
-          </div>
-
-          <div class="card-footer">
-            <div class="stats">
-              <span>👨‍🎓 {{ formation.inscriptionsCount || 0 }} inscrits</span>
-              <span>📊 {{ formation.modulesCount || 0 }} modules</span>
-              <span>📋 {{ formation.prerequisCount || 0 }} prérequis</span>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
-  }
-
-  <!-- Modal Création/Modification -->
-  @if (showModal) {
-    <div class="modal-overlay" (click)="closeModal()">
-      <div class="modal modal-lg" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>{{ editMode ? 'Modifier la formation' : 'Nouvelle formation' }}</h2>
-          <button class="close-btn" (click)="closeModal()">✖</button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Titre *</label>
-            <input type="text" [(ngModel)]="formationForm.titre" class="form-control" placeholder="Titre de la formation">
-          </div>
-
-          <div class="form-group">
-            <label>Description *</label>
-            <textarea [(ngModel)]="formationForm.description" class="form-control" rows="4" placeholder="Description détaillée de la formation"></textarea>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Durée (heures) *</label>
-              <input type="number" [(ngModel)]="formationForm.duree" class="form-control" min="1">
-            </div>
-            <div class="form-group">
-              <label>Prix (DT) *</label>
-              <input type="number" [(ngModel)]="formationForm.prix" class="form-control" min="0" step="10">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Date de début *</label>
-              <input type="date" [(ngModel)]="formationForm.dateDebut" class="form-control">
-            </div>
-            <div class="form-group">
-              <label>Date de fin *</label>
-              <input type="date" [(ngModel)]="formationForm.dateFin" class="form-control">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Catégorie</label>
-              <input type="text" [(ngModel)]="formationForm.categorie" class="form-control" placeholder="Ex: Développement Web">
-            </div>
-            <div class="form-group">
-              <label>Niveau</label>
-              <select [(ngModel)]="formationForm.niveau" class="form-control">
-                @for (niveau of niveaux; track niveau) {
-                  <option [value]="niveau">{{ niveau }}</option>
-                }
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Formateur responsable *</label>
-            <select [(ngModel)]="formationForm.formateurId" class="form-control">
-              <option [value]="null">Sélectionner un formateur</option>
-              @for (formateur of formateurs; track formateur.id) {
-                <option [value]="formateur.id">{{ formateur.firstName }} {{ formateur.lastName }} - {{ formateur.specialite }}</option>
-              }
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>URL de l'image (optionnel)</label>
-            <input type="url" [(ngModel)]="formationForm.imageUrl" class="form-control" placeholder="https://...">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-secondary" (click)="closeModal()">Annuler</button>
-          <button class="btn-primary" (click)="saveFormation()">
-            {{ editMode ? 'Mettre à jour' : 'Créer' }}
-          </button>
-        </div>
-      </div>
-    </div>
-  }
+  </div>
 </div>
+
+<!-- Modal Formulaire -->
+<ng-template #formModal>
+  <h2 mat-dialog-title>
+    <mat-icon>{{ editMode ? 'edit' : 'add' }}</mat-icon>
+    {{ editMode ? 'Modifier la formation' : 'Nouvelle formation' }}
+  </h2>
+  <mat-dialog-content>
+    <form [formGroup]="formationForm" class="form-modal">
+      <mat-form-field appearance="outline">
+        <mat-label>Titre</mat-label>
+        <input matInput formControlName="titre" required>
+        <mat-error *ngIf="formationForm.get('titre')?.hasError('required')">Le titre est requis</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="4" required></textarea>
+        <mat-error *ngIf="formationForm.get('description')?.hasError('required')">La description est requise</mat-error>
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Durée (heures)</mat-label>
+          <input matInput type="number" formControlName="duree" required>
+          <mat-error *ngIf="formationForm.get('duree')?.hasError('required')">La durée est requise</mat-error>
+          <mat-error *ngIf="formationForm.get('duree')?.hasError('min')">Minimum 1 heure</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Catégorie</mat-label>
+          <input matInput formControlName="categorie" placeholder="Ex: Développement Web">
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Date de début</mat-label>
+          <input matInput type="date" formControlName="dateDebut" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date de fin</mat-label>
+          <input matInput type="date" formControlName="dateFin" required>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Niveau</mat-label>
+          <mat-select formControlName="niveau">
+            <mat-option value="DEBUTANT">Débutant</mat-option>
+            <mat-option value="INTERMEDIAIRE">Intermédiaire</mat-option>
+            <mat-option value="AVANCE">Avancé</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>URL de l'image (optionnel)</mat-label>
+          <input matInput formControlName="imageUrl" placeholder="https://...">
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Formateur responsable</mat-label>
+        <mat-select formControlName="formateurId" required>
+          <mat-option *ngFor="let f of formateurs" [value]="f.id">
+            {{ f.firstName }} {{ f.lastName }} - {{ f.specialite }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="formationForm.get('formateurId')?.hasError('required')">Sélectionnez un formateur</mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Annuler</button>
+    <button mat-raised-button color="primary" [disabled]="formationForm.invalid" (click)="saveFormation()">
+      {{ editMode ? 'Mettre à jour' : 'Créer' }}
+    </button>
+  </mat-dialog-actions>
+</ng-template>

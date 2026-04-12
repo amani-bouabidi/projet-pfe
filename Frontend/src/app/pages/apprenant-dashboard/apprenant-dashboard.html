@@ -1,1 +1,194 @@
-<p>apprenant-dashboard works!</p>
+<div class="apprenant-dashboard">
+  <!-- Sidebar -->
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <mat-icon class="logo-icon">school</mat-icon>
+          <h2>IRA Formation</h2>
+        </div>
+        <div class="apprenant-info">
+          <div class="apprenant-avatar"></div>
+          <div class="apprenant-details">
+            <span class="apprenant-name">{{ userName }}</span>
+            <span class="apprenant-role">Apprenant</span>
+          </div>
+        </div>
+      </div>
+
+      <mat-nav-list class="sidebar-nav">
+        <a mat-list-item class="nav-link active">
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>Tableau de bord</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>menu_book</mat-icon>
+          <span matListItemTitle>Mes formations</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>star</mat-icon>
+          <span matListItemTitle>Mes favoris</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>note</mat-icon>
+          <span matListItemTitle>Mes notes</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>notifications</mat-icon>
+          <span matListItemTitle>Notifications</span>
+          <span class="badge" *ngIf="notificationsCount > 0">{{ notificationsCount }}</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>description</mat-icon>
+          <span matListItemTitle>Mes attestations</span>
+        </a>
+      </mat-nav-list>
+
+      <div class="sidebar-footer">
+        <button mat-raised-button color="warn" class="logout-btn">
+          <mat-icon>logout</mat-icon>
+          Déconnexion
+        </button>
+      </div>
+    </mat-drawer>
+
+    <!-- Contenu principal -->
+    <mat-drawer-content class="main-content">
+      <!-- En-tête -->
+      <div class="content-header">
+        <div class="header-title">
+          <h1>Tableau de bord</h1>
+          <p>Bonjour {{ userName }} ! Voici un résumé de votre activité.</p>
+        </div>
+        <div class="header-date">
+          <mat-chip>
+            <mat-icon>today</mat-icon>
+            <span>{{ todayDate | date:'dd MMMM yyyy' }}</span>
+          </mat-chip>
+        </div>
+      </div>
+
+      <!-- Cartes statistiques -->
+      <div class="stats-grid">
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon blue">
+              <mat-icon>menu_book</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.formationsEnCours }}</h3>
+              <p>Formations en cours</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon green">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.formationsTerminees }}</h3>
+              <p>Formations terminées</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon purple">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.progressionMoyenne }}%</h3>
+              <p>Progression moyenne</p>
+              <mat-progress-bar mode="determinate" [value]="stats.progressionMoyenne"></mat-progress-bar>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon orange">
+              <mat-icon>description</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.certificatsObtenus }}</h3>
+              <p>Certificats obtenus</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Mes formations récentes -->
+      <mat-card class="formations-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>menu_book</mat-icon>
+            Mes formations récentes
+          </mat-card-title>
+          <a href="#" class="view-all">Voir toutes →</a>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="formations-list">
+            <div class="formation-item" *ngFor="let formation of formationsRecentes">
+              <div class="formation-info">
+                <h4>{{ formation.titre }}</h4>
+                <p>{{ formation.description | slice:0:80 }}...</p>
+                <div class="progress-section">
+                  <div class="progress-info">
+                    <span>Progression</span>
+                    <span class="progress-value">{{ formation.progression || 0 }}%</span>
+                  </div>
+                  <mat-progress-bar mode="determinate" [value]="formation.progression || 0"></mat-progress-bar>
+                </div>
+              </div>
+              <button mat-raised-button color="primary" class="btn-continue">
+                Continuer →
+              </button>
+            </div>
+            <div class="empty-state" *ngIf="formationsRecentes.length === 0">
+              <mat-icon>menu_book</mat-icon>
+              <p>Vous n'êtes inscrit à aucune formation</p>
+              <button mat-stroked-button color="primary">Découvrir les formations</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Notifications récentes -->
+      <mat-card class="notifications-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>notifications</mat-icon>
+            Notifications récentes
+          </mat-card-title>
+          <a href="#" class="view-all">Voir toutes →</a>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="notifications-list">
+            <div class="notification-item" *ngFor="let notif of notificationsRecentes" [class.unread]="!notif.lue">
+              <div class="notification-icon">
+                <mat-icon [class]="notif.type === 'SUCCESS' ? 'success' : (notif.type === 'WARNING' ? 'warning' : 'info')">
+                  {{ notif.type === 'SUCCESS' ? 'check_circle' : (notif.type === 'WARNING' ? 'warning' : 'info') }}
+                </mat-icon>
+              </div>
+              <div class="notification-content">
+                <h4>{{ notif.titre }}</h4>
+                <p>{{ notif.message }}</p>
+                <span class="date">{{ notif.date | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <button mat-icon-button class="btn-mark" *ngIf="!notif.lue">
+                <mat-icon>done</mat-icon>
+              </button>
+            </div>
+            <div class="empty-state" *ngIf="notificationsRecentes.length === 0">
+              <mat-icon>notifications_none</mat-icon>
+              <p>Aucune notification</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>

@@ -1,78 +1,231 @@
 <div class="formateur-dashboard">
   <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">
-        <span class="icon">👨‍🏫</span>
-        <h2>Espace Formateur</h2>
-      </div>
-      <div class="user-info">
-        <div class="avatar">{{ getInitials(userName) }}</div>
-        <div class="user-details">
-          <p class="name">{{ userName }}</p>
-          <p class="email">{{ userEmail }}</p>
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer mode="side" opened class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <mat-icon class="logo-icon">school</mat-icon>
+          <h2>IRA Formation</h2>
+        </div>
+        <div class="formateur-info">
+          <div class="formateur-avatar"></div>
+          <div class="formateur-details">
+            <span class="formateur-name">{{ userName }}</span>
+            <span class="formateur-role">Formateur</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <nav class="sidebar-nav">
-      <ul>
-        <li>
-          <a routerLink="/formateur/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-            <span class="icon">📊</span>
-            <span>Tableau de bord</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/formateur/prerequis" routerLinkActive="active">
-            <span class="icon">📋</span>
-            <span>Prérequis</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+      <mat-nav-list class="sidebar-nav">
+        <a mat-list-item class="nav-link active">
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>Tableau de bord</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>menu_book</mat-icon>
+          <span matListItemTitle>Mes formations</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>list_alt</mat-icon>
+          <span matListItemTitle>Prérequis</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>video_call</mat-icon>
+          <span matListItemTitle>Sessions</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>assessment</mat-icon>
+          <span matListItemTitle>Évaluations</span>
+        </a>
+        <a mat-list-item class="nav-link">
+          <mat-icon matListItemIcon>people</mat-icon>
+          <span matListItemTitle>Apprenants</span>
+        </a>
+      </mat-nav-list>
 
-    <div class="sidebar-footer">
-      <button class="btn-logout" (click)="logout()">
-        <span class="icon">🚪</span>
-        <span>Déconnexion</span>
-      </button>
-    </div>
-  </div>
+      <div class="sidebar-footer">
+        <button mat-raised-button color="warn" class="logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          Déconnexion
+        </button>
+      </div>
+    </mat-drawer>
 
-  <!-- Contenu principal -->
-  <div class="content">
-    <div class="content-header">
-      <h1>Tableau de bord</h1>
-      <p>Bienvenue {{ userName }} ! Voici un aperçu de votre activité.</p>
-    </div>
+    <!-- Contenu principal -->
+    <mat-drawer-content class="main-content">
+      <!-- En-tête -->
+      <div class="content-header">
+        <div class="header-title">
+          <h1>Tableau de bord</h1>
+          <p>Bienvenue {{ userName }} ! Voici un aperçu de votre activité.</p>
+        </div>
+        <div class="header-date">
+          <mat-chip>
+            <mat-icon>today</mat-icon>
+            <span>{{ todayDate | date:'dd MMMM yyyy' }}</span>
+          </mat-chip>
+        </div>
+      </div>
 
-    @if (isLoading) {
-      <div class="loading">Chargement des statistiques...</div>
-    } @else {
+      <!-- Cartes statistiques -->
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📚</div>
-          <div class="stat-info">
-            <h3>{{ stats.totalFormations }}</h3>
-            <p>Formations</p>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">👨‍🎓</div>
-          <div class="stat-info">
-            <h3>{{ stats.totalApprenants }}</h3>
-            <p>Apprenants</p>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🎥</div>
-          <div class="stat-info">
-            <h3>{{ stats.totalSessions }}</h3>
-            <p>Sessions</p>
-          </div>
-        </div>
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon purple">
+              <mat-icon>menu_book</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.totalFormations }}</h3>
+              <p>Mes formations</p>
+              <span class="stat-trend">Assignées</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon blue">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.totalApprenants }}</h3>
+              <p>Apprenants</p>
+              <span class="stat-trend up">
+                <mat-icon>trending_up</mat-icon> Total inscrits
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon green">
+              <mat-icon>video_call</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.totalSessions }}</h3>
+              <p>Sessions</p>
+              <span class="stat-trend">{{ stats.sessionsMois }} ce mois</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-icon orange">
+              <mat-icon>assessment</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.tauxReussite }}%</h3>
+              <p>Taux de réussite</p>
+              <span class="stat-trend up">
+                <mat-icon>trending_up</mat-icon> +5%
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
-    }
-  </div>
+
+      <!-- Graphiques -->
+      <div class="charts-row">
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Évolution des apprenants</mat-card-title>
+            <mat-card-subtitle>Par mois</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas id="evolutionChart"></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>Répartition par formation</mat-card-title>
+            <mat-card-subtitle>Nombre d'apprenants</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas id="repartitionChart"></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Tableaux récents -->
+      <div class="tables-row">
+        <!-- Prochaines sessions -->
+        <mat-card class="data-table">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>event</mat-icon>
+              Prochaines sessions
+            </mat-card-title>
+            <a href="#" class="view-all">Voir tout →</a>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="sessions-list">
+              <div class="session-item" *ngFor="let session of prochainesSessions">
+                <div class="session-date">
+                  <span class="day">{{ session.date | date:'dd' }}</span>
+                  <span class="month">{{ session.date | date:'MMM' }}</span>
+                </div>
+                <div class="session-info">
+                  <h4>{{ session.titre }}</h4>
+                  <p>{{ session.formationTitre }}</p>
+                  <span class="heure">🕐 {{ session.heure }}</span>
+                </div>
+                <button mat-stroked-button color="primary" class="btn-start">
+                  Démarrer
+                </button>
+              </div>
+              <div class="empty-state" *ngIf="prochainesSessions.length === 0">
+                <mat-icon>event_busy</mat-icon>
+                <p>Aucune session planifiée</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Dernières évaluations -->
+        <mat-card class="data-table">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>rate_review</mat-icon>
+              Dernières évaluations
+            </mat-card-title>
+            <a href="#" class="view-all">Voir tout →</a>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="evaluations-list">
+              <div class="evaluation-item" *ngFor="let evaluation of dernieresEvaluations">
+                <div class="evaluation-apprenant">
+                  <div class="avatar"></div>
+                  <div>
+                    <div class="apprenant-name">{{ evaluation.apprenantNom }}</div>
+                    <div class="formation-name">{{ evaluation.formationTitre }}</div>
+                  </div>
+                </div>
+                <div class="evaluation-note">
+                  <span class="note" [class.excellent]="evaluation.note >= 16"
+                        [class.bien]="evaluation.note >= 12 && evaluation.note < 16"
+                        [class.passable]="evaluation.note >= 10 && evaluation.note < 12">
+                    {{ evaluation.note }}/20
+                  </span>
+                </div>
+                <button mat-icon-button color="primary" matTooltip="Voir détail">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+              <div class="empty-state" *ngIf="dernieresEvaluations.length === 0">
+                <mat-icon>rate_review</mat-icon>
+                <p>Aucune évaluation récente</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
 </div>

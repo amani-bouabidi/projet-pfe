@@ -1,31 +1,53 @@
-<header class="header">
+<mat-toolbar color="primary" class="header">
   <div class="left">
-    <button class="menu-btn" (click)="toggleSidebar()" title="Toggle sidebar">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="3" y1="6"  x2="21" y2="6"/>
-        <line x1="3" y1="12" x2="21" y2="12"/>
-        <line x1="3" y1="18" x2="21" y2="18"/>
-      </svg>
+    <button mat-icon-button class="menu-btn" (click)="toggleSidebar()" matTooltip="Toggle sidebar">
+      <mat-icon>menu</mat-icon>
     </button>
 
     <div class="logo">
-      <img src="images/ira_logo_hd.png" alt="IRA logo">
+      <img src="images/ira_logo_hd.png" alt="IRA logo" onerror="this.src='https://via.placeholder.com/45'">
       <span>Institut des Régions Arides</span>
     </div>
   </div>
 
   <div class="right">
-    <button class="icon-btn" title="Profile">
-      <svg width="20" height="20" fill="#333" viewBox="0 0 24 24">
-        <circle cx="12" cy="8" r="4"></circle>
-        <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
-      </svg>
+    <button mat-icon-button [matBadge]="notificationCount" matBadgeColor="warn" matTooltip="Notifications" class="icon-btn">
+      <mat-icon>notifications_none</mat-icon>
     </button>
 
-    <button class="icon-btn logout-button" (click)="logout()" title="Logout">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="#333">
-        <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
-      </svg>
+    <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
+      <img src="https://ui-avatars.com/api/?name={{userName}}&background=0b8f7a&color=fff" alt="User avatar" class="user-avatar">
+      <span class="user-name">{{ userName }}</span>
+      <mat-icon>arrow_drop_down</mat-icon>
     </button>
+
+    <mat-menu #userMenu="matMenu" class="user-menu">
+      <div class="menu-header">
+        <img src="https://ui-avatars.com/api/?name={{userName}}&background=0b8f7a&color=fff" alt="User avatar">
+        <div>
+          <div class="menu-user-name">{{ userName }}</div>
+          <div class="menu-user-email">{{ userEmail }}</div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <button mat-menu-item (click)="onProfileClick()">
+        <mat-icon>person</mat-icon>
+        <span>My Profile</span>
+      </button>
+
+      <button mat-menu-item>
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+
+      <mat-divider></mat-divider>
+
+      <button mat-menu-item (click)="onLogout()" class="logout-item">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
   </div>
-</header>
+</mat-toolbar>

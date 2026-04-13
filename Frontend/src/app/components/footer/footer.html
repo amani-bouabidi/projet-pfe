@@ -1,0 +1,147 @@
+<footer class="footer" @fadeInUp>
+  <div class="footer-container">
+
+    <!-- Main Footer Content -->
+    <div class="footer-main">
+
+      <!-- About Section -->
+      <div class="footer-section about-section">
+        <div class="footer-logo">
+          <img src="images/ira_logo_hd.png" alt="IRA Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50'">
+          <h3>Institut des Régions Arides</h3>
+        </div>
+        <p class="about-text">
+          L'IRA est un établissement d'excellence dédié à la recherche,
+          l'innovation et la formation dans les régions arides.
+        </p>
+        <div class="contact-info">
+          <div class="contact-item">
+            <mat-icon>location_on</mat-icon>
+            <span>Médenine, Tunisie</span>
+          </div>
+          <div class="contact-item">
+            <mat-icon>phone</mat-icon>
+            <span>+216 75 123 456</span>
+          </div>
+          <div class="contact-item">
+            <mat-icon>email</mat-icon>
+            <span>contact@ira.tn</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links Section -->
+      <div class="footer-section">
+        <h4>Liens Rapides</h4>
+        <ul class="footer-links">
+          @for (link of quickLinks; track link.label) {
+            <li>
+              <a [routerLink]="link.url"
+                 [attr.target]="link.external ? '_blank' : '_self'"
+                 class="footer-link">
+                <mat-icon class="link-icon">chevron_right</mat-icon>
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Services Section -->
+      <div class="footer-section">
+        <h4>Nos Services</h4>
+        <ul class="footer-links">
+          @for (link of servicesLinks; track link.label) {
+            <li>
+              <a [routerLink]="link.url"
+                 [attr.target]="link.external ? '_blank' : '_self'"
+                 class="footer-link">
+                <mat-icon class="link-icon">chevron_right</mat-icon>
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Newsletter Section -->
+      <div class="footer-section newsletter-section">
+        <h4>Newsletter</h4>
+        <p class="newsletter-text">
+          Inscrivez-vous pour recevoir nos actualités et offres spéciales
+        </p>
+
+        <div class="newsletter-form">
+          <mat-form-field appearance="outline" class="newsletter-input">
+            <mat-label>Votre email</mat-label>
+            <input matInput
+                   type="email"
+                   [(ngModel)]="email"
+                   placeholder="exemple@email.com"
+                   (keyup.enter)="subscribeNewsletter()">
+            <mat-icon matPrefix>email</mat-icon>
+          </mat-form-field>
+
+          <button mat-raised-button
+                  color="primary"
+                  class="subscribe-btn"
+                  (click)="subscribeNewsletter()"
+                  [disabled]="isSubscribing">
+            @if (isSubscribing) {
+              <mat-icon>hourglass_empty</mat-icon>
+            } @else {
+              <mat-icon>send</mat-icon>
+            }
+            {{ isSubscribing ? 'Inscription...' : 'S\'abonner' }}
+          </button>
+        </div>
+
+        <!-- Social Links -->
+        <div class="social-links">
+          <h4>Suivez-nous</h4>
+          <div class="social-icons">
+            @for (social of socialLinks; track social.name) {
+              <a class="social-icon"
+                 [style.background]="social.color"
+                 (click)="onSocialClick(social)"
+                 [attr.aria-label]="social.name"
+                 matTooltip="{{ social.name }}">
+                <mat-icon>{{ social.icon }}</mat-icon>
+              </a>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider class="footer-divider"></mat-divider>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="copyright">
+        <p>&copy; {{ currentYear }} Institut des Régions Arides. Tous droits réservés.</p>
+      </div>
+
+      <div class="legal-links">
+        @for (link of legalLinks; track link.label; let last = $last) {
+          <a [routerLink]="link.url" class="legal-link">
+            {{ link.label }}
+          </a>
+          @if (!last) {
+            <span class="separator">|</span>
+          }
+        }
+      </div>
+
+      <div class="back-to-top">
+        <button mat-mini-fab
+                color="primary"
+                (click)="scrollToTop()"
+                matTooltip="Retour en haut"
+                aria-label="Retour en haut">
+          <mat-icon>arrow_upward</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</footer>

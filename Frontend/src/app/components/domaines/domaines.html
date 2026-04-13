@@ -1,0 +1,64 @@
+<section class="domaines-section" @fadeInUp>
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h2 class="section-title">Nos Domaines d'Excellence</h2>
+      <p class="section-subtitle">
+        Découvrez nos domaines de recherche et d'enseignement à la pointe de l'innovation
+      </p>
+      <mat-divider class="section-divider"></mat-divider>
+    </div>
+
+    <!-- Material Grid List -->
+    <mat-grid-list
+      [cols]="breakpoint"
+      rowHeight="380px"
+      gutterSize="24px"
+      (window:resize)="onResize()">
+
+      @for (domaine of domaines; track domaine.id) {
+        <mat-grid-tile>
+          <mat-card class="domaine-card"
+                    [style.border-top-color]="domaine.color"
+                    matRipple
+                    [matRippleCentered]="true"
+                    [matRippleColor]="domaine.color + '30'"
+                    (click)="onDomaineClick(domaine)"
+                    [attr.aria-label]="'Découvrir le domaine ' + domaine.title">
+
+            <!-- Icon Container -->
+            <div class="icon-container" [style.background]="domaine.color + '15'">
+              <mat-icon class="domaine-icon" [style.color]="domaine.color">
+                {{ domaine.icon }}
+              </mat-icon>
+            </div>
+
+            <!-- Title -->
+            <mat-card-title class="domaine-title">
+              {{ domaine.title }}
+            </mat-card-title>
+
+            <!-- Description -->
+            <mat-card-content class="domaine-description">
+              <p>{{ domaine.description }}</p>
+            </mat-card-content>
+
+            <!-- Action Button -->
+            <mat-card-actions class="card-actions">
+              <button mat-button
+                      [matTooltip]="'En savoir plus sur ' + domaine.title"
+                      [style.color]="domaine.color"
+                      class="learn-more-btn">
+                En savoir plus
+                <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+              </button>
+            </mat-card-actions>
+
+            <!-- Hover Effect Overlay -->
+            <div class="card-overlay" [style.background]="domaine.color + '05'"></div>
+          </mat-card>
+        </mat-grid-tile>
+      }
+    </mat-grid-list>
+  </div>
+</section>

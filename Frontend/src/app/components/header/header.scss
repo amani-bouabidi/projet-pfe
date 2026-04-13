@@ -4,7 +4,160 @@
   border-bottom: 1px solid #eee;
 
   display: flex;
+  align.header {
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid #eee;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+
+  // Override Material toolbar default padding
+  ::ng-deep {
+    .mat-toolbar-row {
+      padding: 0;
+      height: 60px;
+    }
+  }
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.menu-btn {
+  color: #333;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+
+  img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+  }
+
+  span {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  color: #333;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #333;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-weight: 500;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+// User Menu Styles
+::ng-deep .user-menu {
+  min-width: 280px;
+  margin-top: 8px;
+
+  .menu-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+
+    img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .menu-user-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .menu-user-email {
+      font-size: 12px;
+      color: #666;
+    }
+  }
+
+  .logout-item {
+    color: #dc3545;
+
+    mat-icon {
+      color: #dc3545;
+    }
+
+    &:hover {
+      background: rgba(220, 53, 69, 0.1);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .header {
+    padding: 0 12px;
+  }
+
+  .left {
+    gap: 12px;
+  }
+
+  .logo span {
+    font-size: 14px;
+  }
+}-items: center;
   justify-content: space-between;
 
   padding: 0 20px;
@@ -91,5 +244,5 @@
             &:hover {
         background: rgba(0, 0, 0, 0.05);
       }
-            
+
             }

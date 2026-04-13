@@ -1,0 +1,378 @@
+// Variables
+$primary-color: #0b8f7a;
+$text-dark: #2c3e50;
+$text-gray: #7f8c8d;
+$bg-light: #fafbfc;
+$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Section Styles
+.domaines-section {
+  padding: 80px 0;
+  background: $bg-light;
+  position: relative;
+  overflow: hidden;
+
+  // Decorative background pattern
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 400px;
+    background: linear-gradient(135deg, rgba(11, 143, 122, 0.05) 0%, rgba(11, 143, 122, 0) 100%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 60px 0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 40px 0;
+  }
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+}
+
+// Section Header
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
+  }
+}
+
+.section-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: $text-dark;
+  margin-bottom: 16px;
+  position: relative;
+  display: inline-block;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 28px;
+  }
+}
+
+.section-subtitle {
+  font-size: 18px;
+  color: $text-gray;
+  max-width: 700px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.section-divider {
+  width: 80px;
+  margin: 0 auto;
+  border-top-width: 3px;
+  border-color: $primary-color;
+  opacity: 0.5;
+}
+
+// Material Grid List Customization
+::ng-deep {
+  .mat-grid-tile {
+    .mat-grid-tile-content {
+      padding: 8px;
+    }
+  }
+}
+
+// Material Card Styles
+.domaine-card {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: $transition-smooth;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border-top: 4px solid transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+
+    .domaine-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .card-overlay {
+      opacity: 1;
+    }
+
+    .arrow-icon {
+      transform: translateX(4px);
+    }
+  }
+
+  // Material Card Overrides
+  ::ng-deep {
+    .mat-mdc-card-title {
+      margin-bottom: 12px;
+    }
+
+    .mat-mdc-card-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mat-mdc-card-actions {
+      padding: 16px;
+      justify-content: center;
+    }
+  }
+}
+
+// Icon Container
+.icon-container {
+  width: 100px;
+  height: 100px;
+  margin: 32px auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: $transition-smooth;
+  background: rgba(11, 143, 122, 0.08);
+
+  @media (max-width: 768px) {
+    width: 80px;
+    height: 80px;
+    margin: 24px auto 20px;
+  }
+
+  @media (max-width: 480px) {
+    width: 70px;
+    height: 70px;
+    margin: 20px auto 16px;
+  }
+}
+
+.domaine-icon {
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+  transition: $transition-smooth;
+
+  @media (max-width: 768px) {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+// Title
+.domaine-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 12px;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+  }
+}
+
+// Description
+.domaine-description {
+  text-align: center;
+  padding: 0 16px;
+
+  p {
+    font-size: 14px;
+    color: $text-gray;
+    line-height: 1.5;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 13px;
+    }
+  }
+}
+
+// Card Actions
+.card-actions {
+  margin-top: auto;
+}
+
+.learn-more-btn {
+  font-weight: 500;
+  font-size: 14px;
+  transition: $transition-smooth;
+
+  .arrow-icon {
+    margin-left: 4px;
+    transition: transform 0.3s ease;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: transparent;
+    opacity: 0.8;
+  }
+}
+
+// Card Overlay
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border-radius: 20px;
+}
+
+// Responsive Breakpoints for Material Grid
+@media (max-width: 1024px) {
+  .domaine-card {
+    border-radius: 16px;
+  }
+
+  .icon-container {
+    width: 90px;
+    height: 90px;
+  }
+
+  .domaine-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .domaine-title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .domaine-card {
+    border-radius: 14px;
+  }
+
+  .icon-container {
+    width: 75px;
+    height: 75px;
+  }
+
+  .domaine-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .domaine-title {
+    font-size: 20px;
+  }
+
+  .learn-more-btn {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .domaine-card {
+    border-radius: 12px;
+  }
+
+  .icon-container {
+    width: 65px;
+    height: 65px;
+  }
+
+  .domaine-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .domaine-title {
+    font-size: 18px;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .domaine-card,
+  .domaine-icon,
+  .arrow-icon,
+  .card-overlay {
+    transition: none;
+  }
+
+  .domaine-card:hover {
+    transform: none;
+  }
+}
+
+// Dark Mode Support
+@media (prefers-color-scheme: dark) {
+  .domaines-section {
+    background: #1a1a2e;
+  }
+
+  .section-title,
+  .domaine-title {
+    color: #ffffff;
+  }
+
+  .section-subtitle,
+  .domaine-description p {
+    color: #a0a0c0;
+  }
+
+  .domaine-card {
+    background: #16213e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    }
+  }
+}

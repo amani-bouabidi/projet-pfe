@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ApprenantService } from '../../../services/apprenant';
-
+import { HeaderComponent } from '../../../components/header/header';
+import { SidebarComponent } from '../../../components/sidebar/sidebar';
+import { HeroCarouselComponent } from '../../../components/hero-carousel/hero-carousel';
+import { Domaine, DomainesComponent } from '../../../components/domaines/domaines';
+import { FooterComponent } from '../../../components/footer/footer';
 @Component({
   selector: 'app-catalogue',
-  imports: [],
+  imports: [HeaderComponent, SidebarComponent, HeroCarouselComponent, DomainesComponent, FooterComponent ],
   templateUrl: './catalogue.html',
   styleUrl: './catalogue.scss',
 })

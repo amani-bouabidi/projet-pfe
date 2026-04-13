@@ -2,16 +2,26 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class SidebarService {
+  private sidebarState = new BehaviorSubject<boolean>(false);
+  sidebarState$ = this.sidebarState.asObservable();
 
-  private isOpen = new BehaviorSubject<boolean>(false);
-
-  sidebarState$ = this.isOpen.asObservable();
-
-  toggle() {
-    this.isOpen.next(!this.isOpen.value);
+  toggle(): void {
+    console.log('SidebarService toggle called, current state:', this.sidebarState.value);
+    this.sidebarState.next(!this.sidebarState.value);
   }
 
+  open(): void {
+    this.sidebarState.next(true);
+  }
+
+  close(): void {
+    this.sidebarState.next(false);
+  }
+
+  getState(): boolean {
+    return this.sidebarState.value;
+  }
 }

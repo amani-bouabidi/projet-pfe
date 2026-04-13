@@ -1,20 +1,53 @@
-<div class="sidebar" [class.closed]="!isOpen">
-  <div class="height-top">
-    <h2>Menu</h2>
-  <button class="close-btn" (click)="closeSidebar()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M15 18L9 12L15 6"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"/>
-      </svg>
-    </button>
-    </div>
+<!-- Overlay -->
+<div class="sidebar-overlay"
+     *ngIf="isOpen"
+     (click)="closeSidebar()">
+</div>
 
-  <ul>
-    <li>Dashboard</li>
-    <li>Users</li>
-    <li>Settings</li>
-  </ul>
+<!-- Sidebar -->
+<div class="sidebar" [class.closed]="!isOpen">
+  <div class="sidebar-header">
+    <div class="logo-section">
+      <img src="images/ira_logo_hd.png" alt="IRA logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40'">
+      <h2>IRA Platform</h2>
+    </div>
+    <button class="close-btn" (click)="closeSidebar()">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="user-info">
+    <img src="https://ui-avatars.com/api/?name=John+Doe&background=0b8f7a&color=fff" alt="User avatar" class="user-avatar">
+    <div class="user-details">
+      <div class="user-name">John Doe</div>
+      <div class="user-role">Administrator</div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <mat-nav-list class="nav-list">
+    <a mat-list-item *ngFor="let item of menuItems"
+       [routerLink]="item.route"
+       (click)="closeSidebar()"
+       class="nav-item">
+      <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+      <span class="nav-label">{{ item.label }}</span>
+    </a>
+  </mat-nav-list>
+
+  <mat-divider></mat-divider>
+
+  <div class="sidebar-footer">
+    <div class="footer-item">
+      <mat-icon>help</mat-icon>
+      <span>Help & Support</span>
+    </div>
+    <div class="footer-item" (click)="closeSidebar()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </div>
+  </div>
 </div>

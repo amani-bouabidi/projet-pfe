@@ -48,7 +48,8 @@
               <button mat-button
                       [matTooltip]="'En savoir plus sur ' + domaine.title"
                       [style.color]="domaine.color"
-                      class="learn-more-btn">
+                      class="learn-more-btn"
+                      (click)="onDomaineClick(domaine)">
                 En savoir plus
                 <mat-icon class="arrow-icon">arrow_forward</mat-icon>
               </button>

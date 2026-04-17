@@ -1,0 +1,31 @@
+<div class="container">
+  <button (click)="goBack()" class="back-btn">← Retour</button>
+
+  <h1>Formations en {{ domaineNom }}</h1>
+  <p>{{ filteredFormations.length }} formation(s)</p>
+
+  <input
+    type="text"
+    placeholder="Rechercher..."
+    [(ngModel)]="searchTerm"
+    (input)="onSearch()"
+    class="search-input">
+
+  <div class="formations-grid">
+    @for (formation of filteredFormations; track formation.id) {
+      <div class="formation-card" (click)="goToFormationDetail(formation.id)">
+        <h3>{{ formation.titre }}</h3>
+        <p>{{ formation.description }}</p>
+        <div class="meta">
+          <span>{{ formation.formateurNom }}</span>
+          <span>{{ formation.duree }}</span>
+        </div>
+        <button class="detail-btn">Voir détails →</button>
+      </div>
+    }
+  </div>
+
+  @if (filteredFormations.length === 0) {
+    <div class="no-data">Aucune formation</div>
+  }
+</div>

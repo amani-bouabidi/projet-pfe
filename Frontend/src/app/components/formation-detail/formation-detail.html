@@ -1,0 +1,107 @@
+<div class="detail-container">
+  <button mat-button (click)="goBack()" class="back-btn">
+    <mat-icon>arrow_back</mat-icon>
+    Retour aux formations
+  </button>
+
+  @if (formation) {
+    <!-- Formation Header -->
+    <mat-card class="formation-header">
+      <mat-card-header>
+        <mat-icon mat-card-avatar class="header-icon">school</mat-icon>
+        <mat-card-title>{{ formation.titre }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-icon>person</mat-icon>
+          {{ formation.formateurNom }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ formation.description }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Modules Section -->
+    <mat-card class="modules-container">
+      <mat-card-header>
+        <mat-icon>menu_book</mat-icon>
+        <mat-card-title>Modules de la formation</mat-card-title>
+        <mat-card-subtitle>{{ formation.modules.length }} modules au total</mat-card-subtitle>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        @for (module of formation.modules; track module.id) {
+          <mat-expansion-panel class="module-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>folder</mat-icon>
+                {{ module.titre }}
+              </mat-panel-title>
+              <mat-panel-description>
+                <mat-chip-set>
+                  <mat-chip>{{ module.videos.length }} vidéos</mat-chip>
+                  <mat-chip>{{ module.documents.length }} documents</mat-chip>
+                </mat-chip-set>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="module-content">
+              <p class="module-description">{{ module.description }}</p>
+
+              <!-- Videos Section -->
+              @if (module.videos.length > 0) {
+                <div class="section">
+                  <h3>
+                    <mat-icon>ondemand_video</mat-icon>
+                    Vidéos ({{ module.videos.length }})
+                  </h3>
+                  <mat-list>
+                    @for (video of module.videos; track video.id) {
+                      <mat-list-item class="video-item">
+                        <mat-icon matListItemIcon>play_circle</mat-icon>
+                        <div matListItemTitle>{{ video.titre }}</div>
+                        <div matListItemLine>Durée: {{ video.duration }}</div>
+                      </mat-list-item>
+                    }
+                  </mat-list>
+                </div>
+              }
+
+              <!-- Documents Section -->
+              @if (module.documents.length > 0) {
+                <div class="section">
+                  <h3>
+                    <mat-icon>description</mat-icon>
+                    Documents ({{ module.documents.length }})
+                  </h3>
+                  <mat-list>
+                    @for (doc of module.documents; track doc.id) {
+                      <mat-list-item class="doc-item">
+                        <mat-icon matListItemIcon>insert_drive_file</mat-icon>
+                        <div matListItemTitle>{{ doc.nom }}</div>
+                        <div matListItemLine>Taille: {{ doc.size }}</div>
+                      </mat-list-item>
+                    }
+                  </mat-list>
+                </div>
+              }
+            </div>
+          </mat-expansion-panel>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (!formation) {
+    <mat-card class="error-card">
+      <mat-card-content class="error-content">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h2>Formation non trouvée</h2>
+        <p>La formation avec l'ID {{ formationId }} n'existe pas</p>
+        <button mat-raised-button color="primary" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Retour aux formations
+        </button>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminService } from '../../../services/admin';
+import { AdminService } from '../../../admin/service/admin';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -40,18 +40,7 @@ export class FormationsComponent implements OnInit {
   }
 
   loadFormations(): void {
-    this.loading = true;
-    this.adminService.getAllFormations().subscribe({
-      next: (data) => {
-        this.formations = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erreur chargement formations', err);
-        this.errorMessage = 'Impossible de charger les formations.';
-        this.loading = false;
-      }
-    });
+
   }
 
   // ==================== Modal ====================
@@ -79,7 +68,7 @@ export class FormationsComponent implements OnInit {
   closeModal(): void {
     this.isModalOpen = false;
   }
-
+/*
   // ==================== CRUD ====================
   saveFormation(): void {
     if (this.isEditMode && this.formationForm.id) {
@@ -115,5 +104,5 @@ export class FormationsComponent implements OnInit {
         error: (err) => alert('Erreur lors de la suppression')
       });
     }
-  }
+  } */
 }

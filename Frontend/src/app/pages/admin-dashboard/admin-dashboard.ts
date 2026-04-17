@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AdminService, UtilisateurResponseDTO } from '../../services/admin';
+import { AdminService } from '../../admin/service/admin';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -179,12 +179,8 @@ export class AdminDashboardComponent implements OnInit {
       error: (err) => console.error('Error loading formateurs:', err)
     });
 
-    this.adminService.listerApprenants().subscribe({
-      next: (data) => this.apprenantsCount = data.length,
-      error: (err) => console.error('Error loading apprenants:', err)
-    });
 
-    // Load formations count from formations service
-    this.formationsCount = 12; // Temporary - replace with actual service call
+
+    this.formationsCount = 12;
   }
 }

@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../auth/service/auth';
 import { ApprenantService } from '../../services/apprenant';
 
 // Interface pour les stats du dashboard

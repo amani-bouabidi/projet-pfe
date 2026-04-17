@@ -1,0 +1,256 @@
+<div class="stepper-container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Création d'une formation</h1>
+    <p>Assistant en 3 étapes pour créer votre formation</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <mat-progress-bar mode="determinate" [value]="progress" class="progress-bar"></mat-progress-bar>
+
+  <!-- Completion Message -->
+  @if (isCompleted) {
+    <div class="completion-card">
+      <mat-icon class="success-icon">check_circle</mat-icon>
+      <h2>Félicitations !</h2>
+      <p>Votre formation a été créée avec succès</p>
+      <button mat-raised-button color="primary" (click)="resetStepper()">
+        <mat-icon>add</mat-icon> Créer une nouvelle formation
+      </button>
+    </div>
+  }
+
+  <!-- Stepper -->
+  @if (!isCompleted) {
+    <mat-horizontal-stepper #stepper [linear]="true" class="custom-stepper">
+
+      <!-- STEP 1: Formation Info -->
+      <mat-step [stepControl]="formationForm">
+        <ng-template matStepLabel>
+          <mat-icon>info</mat-icon> 1. Informations
+        </ng-template>
+
+        <div class="step-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-icon mat-card-avatar>school</mat-icon>
+              <mat-card-title>Informations de la formation</mat-card-title>
+              <mat-card-subtitle>Remplissez les détails de base</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <form [formGroup]="formationForm" class="formation-form">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Titre de la formation</mat-label>
+                  <input matInput formControlName="titre" placeholder="Ex: Intelligence Artificielle">
+                  <mat-icon matPrefix>title</mat-icon>
+                  @if (formationForm.get('titre')?.touched && formationForm.get('titre')?.invalid) {
+                    <mat-error>{{ getErrorMessage(formationForm.get('titre'), 'Le titre') }}</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Description</mat-label>
+                  <textarea matInput formControlName="description" rows="4" placeholder="Description détaillée..."></textarea>
+                  <mat-icon matPrefix>description</mat-icon>
+                  @if (formationForm.get('description')?.touched && formationForm.get('description')?.invalid) {
+                    <mat-error>{{ getErrorMessage(formationForm.get('description'), 'La description') }}</mat-error>
+                  }
+                </mat-form-field>
+
+                <div class="row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Formateur</mat-label>
+                    <mat-select formControlName="formateurId">
+                      <mat-option value="">Sélectionner</mat-option>
+                      @for (f of formateurs; track f.id) {
+                        <mat-option [value]="f.id">{{ f.prenom }} {{ f.nom }}</mat-option>
+                      }
+                    </mat-select>
+                    <mat-icon matPrefix>person</mat-icon>
+                    @if (formationForm.get('formateurId')?.touched && formationForm.get('formateurId')?.invalid) {
+                      <mat-error>Veuillez sélectionner un formateur</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Domaine</mat-label>
+                    <mat-select formControlName="domaineId">
+                      <mat-option value="">Sélectionner</mat-option>
+                      @for (d of domaines; track d.id) {
+                        <mat-option [value]="d.id">{{ d.nom }}</mat-option>
+                      }
+                    </mat-select>
+                    <mat-icon matPrefix>category</mat-icon>
+                    @if (formationForm.get('domaineId')?.touched && formationForm.get('domaineId')?.invalid) {
+                      <mat-error>Veuillez sélectionner un domaine</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+              </form>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-raised-button color="primary" (click)="createFormation()" [disabled]="formationForm.invalid || isLoading">
+                @if (isLoading) {
+                  <mat-icon>hourglass_empty</mat-icon>
+                } @else {
+                  <mat-icon>arrow_forward</mat-icon>
+                }
+                Suivant
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-step>
+
+      <!-- STEP 2: Modules -->
+      <mat-step [stepControl]="modulesForm">
+        <ng-template matStepLabel>
+          <mat-icon>library_books</mat-icon> 2. Modules
+        </ng-template>
+
+        <div class="step-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-icon mat-card-avatar>folder</mat-icon>
+              <mat-card-title>Modules de la formation</mat-card-title>
+              <mat-card-subtitle>Ajoutez les modules qui composent la formation</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <form [formGroup]="modulesForm">
+                <div formArrayName="modules">
+                  @for (module of modulesArray.controls; track $index; let i = $index) {
+                    <div class="module-card" [formGroupName]="i">
+                      <div class="module-header">
+                        <h3>Module {{ i + 1 }}</h3>
+                        @if (modulesArray.length > 1) {
+                          <button mat-icon-button color="warn" type="button" (click)="removeModule(i)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        }
+                      </div>
+
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Titre du module</mat-label>
+                        <input matInput formControlName="titre" placeholder="Ex: Introduction">
+                        <mat-icon matPrefix>title</mat-icon>
+                        @if (module.get('titre')?.touched && module.get('titre')?.invalid) {
+                          <mat-error>{{ getErrorMessage(module.get('titre'), 'Le titre') }}</mat-error>
+                        }
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Description</mat-label>
+                        <textarea matInput formControlName="description" rows="2" placeholder="Description du module"></textarea>
+                        <mat-icon matPrefix>description</mat-icon>
+                        @if (module.get('description')?.touched && module.get('description')?.invalid) {
+                          <mat-error>{{ getErrorMessage(module.get('description'), 'La description') }}</mat-error>
+                        }
+                      </mat-form-field>
+                    </div>
+                  }
+                </div>
+              </form>
+
+              <div class="add-module">
+                <button mat-stroked-button color="primary" type="button" (click)="addModule()">
+                  <mat-icon>add</mat-icon> Ajouter un module
+                </button>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-button (click)="stepper.previous()">
+                <mat-icon>arrow_back</mat-icon> Retour
+              </button>
+              <button mat-raised-button color="primary" (click)="createModules()" [disabled]="modulesArray.invalid || isLoading">
+                @if (isLoading) {
+                  <mat-icon>hourglass_empty</mat-icon>
+                } @else {
+                  <mat-icon>arrow_forward</mat-icon>
+                }
+                Suivant
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-step>
+
+      <!-- STEP 3: Module Content -->
+      <mat-step>
+        <ng-template matStepLabel>
+          <mat-icon>attach_file</mat-icon> 3. Contenu
+        </ng-template>
+
+        <div class="step-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-icon mat-card-avatar>cloud_upload</mat-icon>
+              <mat-card-title>Contenu des modules</mat-card-title>
+              <mat-card-subtitle>Ajoutez documents et vidéos pour chaque module</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              @for (module of modulesArray.controls; track $index; let i = $index) {
+                <div class="content-module-card">
+                  <h3>
+                    <mat-icon>folder</mat-icon>
+                    Module {{ i + 1 }}: {{ module.get('titre')?.value }}
+                  </h3>
+
+                  <!-- Documents Section -->
+                  <div class="content-section">
+                    <h4>📄 Documents</h4>
+                    <div class="content-input-row">
+                      <mat-form-field appearance="outline" class="flex-2">
+                        <mat-label>Nom du document</mat-label>
+                        <input matInput [id]="'doc_nom_' + i" placeholder="Ex: cours.pdf">
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="flex-2">
+                        <mat-label>Chemin du fichier</mat-label>
+                        <input matInput [id]="'doc_path_' + i" placeholder="/docs/cours.pdf">
+                      </mat-form-field>
+                      <button mat-raised-button color="primary" (click)="addDocumentToModule(i + 1, i)">
+                        <mat-icon>add</mat-icon> Ajouter
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Videos Section -->
+                  <div class="content-section">
+                    <h4>🎬 Vidéos</h4>
+                    <div class="content-input-row">
+                      <mat-form-field appearance="outline" class="flex-2">
+                        <mat-label>Titre de la vidéo</mat-label>
+                        <input matInput [id]="'video_titre_' + i" placeholder="Ex: Introduction">
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="flex-2">
+                        <mat-label>Chemin de la vidéo</mat-label>
+                        <input matInput [id]="'video_path_' + i" placeholder="/videos/intro.mp4">
+                      </mat-form-field>
+                      <button mat-raised-button color="accent" (click)="addVideoToModule(i + 1, i)">
+                        <mat-icon>add</mat-icon> Ajouter
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-button (click)="stepper.previous()">
+                <mat-icon>arrow_back</mat-icon> Retour
+              </button>
+              <button mat-raised-button color="primary" (click)="completeStepper()">
+                <mat-icon>check_circle</mat-icon> Terminer
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  }
+</div>

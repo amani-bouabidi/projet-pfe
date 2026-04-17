@@ -1,0 +1,258 @@
+.detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.back-btn {
+  margin-bottom: 24px !important;
+}
+
+.formation-header {
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #0b8f7a, #2aa18c) !important;
+  color: white !important;
+
+  ::ng-deep {
+    .mat-mdc-card-header {
+      padding: 24px;
+    }
+
+    .mat-mdc-card-title {
+      color: white !important;
+      font-size: 28px !important;
+      font-weight: 600 !important;
+    }
+
+    .mat-mdc-card-subtitle {
+      color: rgba(255, 255, 255, 0.9) !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+
+    .mat-mdc-card-content {
+      padding: 0 24px 24px 24px;
+      color: rgba(255, 255, 255, 0.95);
+      line-height: 1.6;
+    }
+  }
+}
+
+.header-icon {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    color: white;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.modules-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+
+  ::ng-deep {
+    .mat-mdc-card-header {
+      padding: 24px;
+      background: white;
+
+      mat-icon {
+        color: #0b8f7a;
+        margin-right: 12px;
+      }
+
+      .mat-mdc-card-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .mat-mdc-card-subtitle {
+        color: #7f8c8d;
+        margin-top: 4px;
+      }
+    }
+  }
+}
+
+.module-panel {
+  margin-bottom: 16px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+
+  ::ng-deep {
+    .mat-expansion-panel-header {
+      border-radius: 12px !important;
+      padding: 16px 20px !important;
+
+      &:hover {
+        background: #e8f5e9 !important;
+      }
+    }
+
+    .mat-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      mat-icon {
+        color: #0b8f7a;
+      }
+    }
+
+    .mat-panel-description {
+      justify-content: flex-end;
+
+      .mat-mdc-chip-set {
+        display: flex;
+        gap: 8px;
+      }
+
+      .mat-mdc-chip {
+        font-size: 12px;
+        padding: 4px 12px;
+        background: #f0f0f0;
+      }
+    }
+  }
+}
+
+.module-content {
+  padding: 20px;
+  background: #fafafa;
+}
+
+.module-description {
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.section {
+  margin-top: 24px;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: #2c3e50;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e0e0;
+
+    mat-icon {
+      color: #0b8f7a;
+    }
+  }
+}
+
+.video-item, .doc-item {
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 8px;
+  margin-bottom: 8px;
+
+  &:hover {
+    background: #e8f5e9 !important;
+    transform: translateX(4px);
+  }
+
+  ::ng-deep {
+    .mat-mdc-list-item-icon {
+      color: #0b8f7a;
+    }
+
+    .mdc-list-item__primary-text {
+      font-weight: 500;
+      color: #2c3e50;
+    }
+
+    .mat-mdc-list-item-line {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+  }
+}
+
+.error-card {
+  max-width: 500px;
+  margin: 60px auto;
+  text-align: center;
+  border-radius: 16px;
+
+  .error-content {
+    padding: 48px;
+
+    .error-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      color: #f44336;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #7f8c8d;
+      margin-bottom: 24px;
+    }
+
+    button {
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-container {
+    padding: 20px 16px;
+  }
+
+  .formation-header {
+    ::ng-deep {
+      .mat-mdc-card-title {
+        font-size: 22px !important;
+      }
+    }
+  }
+
+  .module-panel {
+    ::ng-deep {
+      .mat-expansion-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .mat-panel-description {
+        justify-content: flex-start;
+      }
+    }
+  }
+}

@@ -41,7 +41,7 @@
         </td>
         <td class="actions">
           <button class="btn btn-sm btn-warning" (click)="openEditModal(formation)">Modifier</button>
-          <button class="btn btn-sm btn-danger" (click)="deleteFormation(formation.id)">Supprimer</button>
+          <button class="btn btn-sm btn-danger" >Supprimer</button>
           <button class="btn btn-sm btn-info" [routerLink]="['/admin/formations', formation.id]">
             Modules
           </button>
@@ -61,7 +61,7 @@
   <div class="modal-content">
     <h2>{{ isEditMode ? 'Modifier la Formation' : 'Créer une Nouvelle Formation' }}</h2>
 
-    <form (ngSubmit)="saveFormation()">
+    <form>
       <div class="form-group">
         <label>Titre *</label>
         <input type="text" [(ngModel)]="formationForm.titre" name="titre" required>

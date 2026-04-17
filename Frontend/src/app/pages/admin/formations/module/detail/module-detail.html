@@ -15,7 +15,7 @@
       <h2>Documents</h2>
       <label class="btn btn-success btn-sm upload-btn">
         + Ajouter Document
-        <input type="file" (change)="onDocumentSelected($event)" hidden accept=".pdf,.doc,.docx,.ppt,.pptx">
+        <input type="file" hidden accept=".pdf,.doc,.docx,.ppt,.pptx">
       </label>
     </div>
 
@@ -41,7 +41,7 @@
       <h2>Vidéos</h2>
       <label class="btn btn-success btn-sm upload-btn">
         + Ajouter Vidéo
-        <input type="file" (change)="onVideoSelected($event)" hidden accept="video/*">
+        <input type="file" hidden accept="video/*">
       </label>
     </div>
 
@@ -63,6 +63,6 @@
 </div>
 
 <!-- Loading State -->
-<div class="loading" *ngIf="loading">
+<div class="loading" >
   <p>Chargement du contenu du module...</p>
 </div>

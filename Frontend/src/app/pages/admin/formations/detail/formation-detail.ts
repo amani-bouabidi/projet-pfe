@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { AdminService } from '../../../../services/admin';
+import { AdminService } from '../../../../admin/service/admin';
 
 @Component({
   selector: 'app-formation-detail',
@@ -26,11 +26,11 @@ export class FormationDetailComponent implements OnInit {
   ngOnInit(): void {
     this.formationId = Number(this.route.snapshot.paramMap.get('formationId'));
     if (this.formationId) {
-      this.loadFormationDetail();
+      //this.loadFormationDetail();
     }
   }
 
-  loadFormationDetail(): void {
+/*  loadFormationDetail(): void {
     this.loading = true;
 
     this.adminService.getFormationWithModules(this.formationId).subscribe({
@@ -53,5 +53,5 @@ export class FormationDetailComponent implements OnInit {
       case 'TERMINEE': return 'status completed';
       default: return 'status planned';
     }
-  }
+  } */
 }

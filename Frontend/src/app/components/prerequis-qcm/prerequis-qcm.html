@@ -1,0 +1,153 @@
+<div class="qcm-container">
+
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon> Retour
+    </button>
+    <h1>📝 Gestion du prérequis (QCM)</h1>
+    <p>Créez un test d'évaluation pour votre formation</p>
+  </div>
+
+  <!-- Fix: Use a safe approach for progress bar -->
+  <mat-progress-bar mode="determinate" [value]="progress" class="progress-bar"></mat-progress-bar>
+
+  @if (isCompleted) {
+    <mat-card class="completion-card">
+      <mat-icon class="success-icon">check_circle</mat-icon>
+      <h2>Test créé avec succès !</h2>
+      <p>Votre QCM a été enregistré et est prêt à être utilisé.</p>
+      <button mat-raised-button color="primary" (click)="resetForm()">
+        <mat-icon>add</mat-icon> Créer un nouveau test
+      </button>
+    </mat-card>
+  }
+
+  @if (!isCompleted) {
+    <mat-horizontal-stepper #stepper [linear]="true" class="custom-stepper">
+
+      <!-- STEP 1 -->
+      <mat-step [stepControl]="testForm">
+        <ng-template matStepLabel>
+          <mat-icon>quiz</mat-icon> 1. Informations
+        </ng-template>
+
+        <div class="step-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-icon mat-card-avatar>description</mat-icon>
+              <mat-card-title>Créer le test</mat-card-title>
+              <mat-card-subtitle>Donnez un titre à votre évaluation</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <form [formGroup]="testForm">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Titre du test</mat-label>
+                  <input matInput formControlName="titre" placeholder="Ex: Test de prérequis">
+                  @if (testForm.get('titre')?.touched && testForm.get('titre')?.invalid) {
+                    <mat-error>{{ getErrorMessage(testForm.get('titre'), 'Le titre') }}</mat-error>
+                  }
+                </mat-form-field>
+              </form>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-raised-button color="primary" (click)="createTest()" [disabled]="testForm.invalid || isLoading">
+                @if (isLoading) { <mat-icon>hourglass_empty</mat-icon> }
+                Suivant
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-step>
+
+      <!-- STEP 2 -->
+      <mat-step>
+        <ng-template matStepLabel>
+          <mat-icon>help</mat-icon> 2. Questions
+        </ng-template>
+
+        <div class="step-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-icon mat-card-avatar>question_answer</mat-icon>
+              <mat-card-title>Ajouter des questions</mat-card-title>
+              <mat-card-subtitle>Créez vos questions à choix multiples</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <form [formGroup]="questionsForm">
+                <div formArrayName="questions">
+                  @for (question of questionsArray.controls; track $index; let qIndex = $index) {
+                    <div class="question-card" [formGroupName]="qIndex">
+                      <div class="question-header">
+                        <h3>Question {{ qIndex + 1 }}</h3>
+                        <button mat-icon-button color="warn" type="button" (click)="removeQuestion(qIndex)">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Texte de la question</mat-label>
+                        <textarea matInput formControlName="questionText" rows="2"
+                                  placeholder="Ex: Qu'est-ce que l'agriculture durable ?"></textarea>
+                        @if (question.get('questionText')?.touched && question.get('questionText')?.invalid) {
+                          <mat-error>{{ getErrorMessage(question.get('questionText'), 'La question') }}</mat-error>
+                        }
+                      </mat-form-field>
+
+                      <div class="choices-section">
+                        <h4>Choix de réponse</h4>
+                        <div formArrayName="choices">
+                          @for (choice of getChoicesArray(qIndex).controls; track $index; let cIndex = $index) {
+                            <div class="choice-item" [formGroupName]="cIndex">
+                              <mat-radio-button
+                                [checked]="choice.get('isCorrect')?.value"
+                                (change)="onCorrectAnswerChange(qIndex, cIndex)">
+                              </mat-radio-button>
+
+                              <mat-form-field appearance="outline" class="flex-1">
+                                <mat-label>Choix {{ cIndex + 1 }}</mat-label>
+                                <input matInput formControlName="choiceText" placeholder="Option">
+                              </mat-form-field>
+
+                              <button mat-icon-button color="warn" type="button" (click)="removeChoice(qIndex, cIndex)">
+                                <mat-icon>close</mat-icon>
+                              </button>
+                            </div>
+                          }
+                        </div>
+
+                        <button mat-stroked-button type="button" (click)="addChoice(qIndex)">
+                          <mat-icon>add</mat-icon> Ajouter un choix
+                        </button>
+                      </div>
+
+                      <mat-divider class="question-divider"></mat-divider>
+                    </div>
+                  }
+                </div>
+              </form>
+
+              <div class="add-question">
+                <button mat-raised-button color="primary" type="button" (click)="addQuestion()">
+                  <mat-icon>add</mat-icon> Ajouter une question
+                </button>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-button (click)="stepper.previous()">
+                <mat-icon>arrow_back</mat-icon> Retour
+              </button>
+              <button mat-raised-button color="primary" (click)="saveQuestions()" [disabled]="isLoading">
+                @if (isLoading) { <mat-icon>hourglass_empty</mat-icon> }
+                Enregistrer le test
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  }
+</div>

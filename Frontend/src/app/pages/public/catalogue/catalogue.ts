@@ -3,11 +3,15 @@ import { ApprenantService } from '../../../services/apprenant';
 import { HeaderComponent } from '../../../components/header/header';
 import { SidebarComponent } from '../../../components/sidebar/sidebar';
 import { HeroCarouselComponent } from '../../../components/hero-carousel/hero-carousel';
-import { Domaine, DomainesComponent } from '../../../components/domaines/domaines';
+import { DomainesComponent } from '../../../components/domaines/domaines';
 import { FooterComponent } from '../../../components/footer/footer';
+import { AdminFormateursComponent } from '../../../admin/components/formateurs/formateurs';
+import { FormationStepperComponent } from '../../../components/formation-stepper/formation-stepper';
+import { PrerequisQcmComponent } from '../../../components/prerequis-qcm/prerequis-qcm';
+
 @Component({
   selector: 'app-catalogue',
-  imports: [HeaderComponent, SidebarComponent, HeroCarouselComponent, DomainesComponent, FooterComponent ],
+  imports: [HeaderComponent, SidebarComponent, HeroCarouselComponent, DomainesComponent, FooterComponent, AdminFormateursComponent, FormationStepperComponent, PrerequisQcmComponent  ],
   templateUrl: './catalogue.html',
   styleUrl: './catalogue.scss',
 })

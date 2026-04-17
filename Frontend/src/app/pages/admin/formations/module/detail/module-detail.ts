@@ -2,16 +2,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { AdminService } from '../../../../../services/admin';
+import { AdminService } from '../../../../../admin/service/admin';
 
 @Component({
   selector: 'app-module-detail',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './module-detail.html',
+  templateUrl:'./module-detail.html',
   styleUrls: ['./module-detail.scss']
 })
-export class ModuleDetailComponent implements OnInit {
+export class ModuleDetailComponent {
 
   module: any = null;
   documents: any[] = [];
@@ -33,11 +33,11 @@ export class ModuleDetailComponent implements OnInit {
   ngOnInit(): void {
     this.moduleId = Number(this.route.snapshot.paramMap.get('moduleId'));
     if (this.moduleId) {
-      this.loadModuleContent();
+      //this.loadModuleContent();
     }
   }
 
-  loadModuleContent(): void {
+  /*loadModuleContent(): void {
     this.loading = true;
     this.adminService.getModuleContent(this.moduleId).subscribe({
       next: (data) => {
@@ -93,5 +93,5 @@ export class ModuleDetailComponent implements OnInit {
         }
       });
     }
-  }
+  }*/
 }

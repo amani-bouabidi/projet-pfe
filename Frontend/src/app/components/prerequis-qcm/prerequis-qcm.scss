@@ -1,0 +1,223 @@
+.qcm-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  min-height: calc(100vh - 64px);
+  background: #f5f7fa;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #0b8f7a;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-btn:hover {
+  color: #097a68;
+}
+
+.header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: #7f8c8d;
+}
+
+.progress-bar {
+  margin-bottom: 32px;
+  border-radius: 4px;
+}
+
+/* Completion Card */
+.completion-card {
+  text-align: center;
+  padding: 48px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  animation: fadeIn 0.5s ease;
+}
+
+.success-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #4caf50;
+  margin-bottom: 20px;
+}
+
+.completion-card h2 {
+  font-size: 24px;
+  color: #2c3e50;
+  margin-bottom: 12px;
+}
+
+.completion-card p {
+  color: #7f8c8d;
+  margin-bottom: 24px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stepper */
+.custom-stepper {
+  background: transparent;
+}
+
+::ng-deep .mat-horizontal-stepper-header {
+  background: white;
+  border-radius: 8px;
+  margin: 0 8px;
+}
+
+::ng-deep .mat-step-icon {
+  background-color: #0b8f7a;
+}
+
+::ng-deep .mat-step-icon-selected {
+  background-color: #0b8f7a;
+}
+
+.step-content {
+  margin-top: 24px;
+}
+
+/* Form Styles */
+.test-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Question Card */
+.question-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid #e0e0e0;
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.question-header h3 {
+  margin: 0;
+  color: #0b8f7a;
+  font-size: 18px;
+}
+
+/* Choices Section */
+.choices-section {
+  margin-top: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+}
+
+.choices-section h4 {
+  margin: 0 0 12px 0;
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.choice-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.add-choice-btn {
+  margin-top: 12px;
+}
+
+.question-divider {
+  margin-top: 20px;
+}
+
+.add-question {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed #e0e0e0;
+}
+
+/* Snackbar Styles */
+::ng-deep .snackbar-success {
+  background: #4caf50;
+  color: white;
+}
+
+::ng-deep .snackbar-error {
+  background: #f44336;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .qcm-container {
+    padding: 20px 16px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .choice-item {
+    flex-wrap: wrap;
+  }
+
+  .choice-item mat-radio-button {
+    order: 1;
+  }
+
+  .choice-item .flex-1 {
+    order: 2;
+    width: calc(100% - 60px);
+  }
+
+  .choice-item button {
+    order: 3;
+  }
+
+  ::ng-deep .mat-horizontal-stepper-header {
+    flex-direction: column;
+    padding: 12px;
+  }
+}

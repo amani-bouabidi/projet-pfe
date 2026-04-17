@@ -1,0 +1,203 @@
+<header>
+  <h1 class="admin-container" style="color: azure;">Gestion les formation </h1>
+</header>
+<div class="admin-container">
+
+
+  <mat-stepper linear #stepper>
+
+    <!-- STEP 1: Domaine & Formation -->
+    <mat-step>
+      <ng-template matStepLabel> Formation</ng-template>
+
+      <div class="step-content">
+        <h3>Domaine</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Choisir Domaine</mat-label>
+          <mat-select (selectionChange)="onDomaineChange($event.value)">
+            <mat-option value="">-- Choisir Domaine --</mat-option>
+            <mat-option *ngFor="let d of domaines" [value]="d.id">
+              {{ d.nom }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="section-divider"></div>
+
+        <h3>Ajouter Formation</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Titre formation</mat-label>
+          <input matInput [(ngModel)]="formation.titre" placeholder="Titre formation">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput [(ngModel)]="formation.description" placeholder="Description" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Formateur</mat-label>
+          <mat-select [(ngModel)]="formation.formateurId">
+            <mat-option *ngFor="let f of formateurs" [value]="f.id">
+              {{ f.nom }} {{ f.prenom }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="button-group">
+          <button mat-raised-button color="primary" (click)="createFormation()">
+            <mat-icon>add</mat-icon> Ajouter Formation
+          </button>
+          <button mat-button matStepperNext [disabled]="!selectedDomaineId">Suivant</button>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- STEP 2: Sélection Formation & Modules -->
+    <mat-step>
+      <ng-template matStepLabel>Gestion des Modules</ng-template>
+
+      <div class="step-content">
+        <h3>Formation</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Choisir Formation</mat-label>
+          <mat-select (selectionChange)="onFormationChange($event.value)">
+            <mat-option value="">-- Choisir Formation --</mat-option>
+            <mat-option *ngFor="let f of formations" [value]="f.id">
+              {{ f.titre }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="section-divider"></div>
+
+        <h3>Ajouter Module</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Titre module</mat-label>
+          <input matInput [(ngModel)]="module.titre" placeholder="Titre module">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description module</mat-label>
+          <textarea matInput [(ngModel)]="module.description" placeholder="Description module" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="button-group">
+          <button mat-raised-button color="primary" (click)="createModule()" [disabled]="!selectedFormationId">
+            <mat-icon>add</mat-icon> Ajouter Module
+          </button>
+          <button mat-button matStepperPrevious>Précédent</button>
+          <button mat-button matStepperNext [disabled]="modules.length === 0">Suivant</button>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- MODULES LIST -->
+        <h3>Modules existants</h3>
+        <div *ngIf="modules.length === 0" class="empty-state">
+          <mat-icon>info</mat-icon>
+          <p>Aucun module trouvé</p>
+        </div>
+
+        <mat-accordion>
+          <mat-expansion-panel *ngFor="let m of modules">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>menu_book</mat-icon>
+                {{ m.titre }}
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ m.description | slice:0:50 }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <p>{{ m.description }}</p>
+
+            <mat-divider></mat-divider>
+
+            <!-- DOCUMENT -->
+            <h4>📄 Upload Document</h4>
+            <div class="upload-section">
+              <input type="file" #docInput (change)="onDocSelected($event)" style="display: none">
+              <button mat-raised-button (click)="docInput.click()">
+                <mat-icon>attach_file</mat-icon> Choisir fichier
+              </button>
+              <span *ngIf="selectedDocName" class="file-name">{{ selectedDocName }}</span>
+              <button mat-raised-button color="accent" (click)="uploadDoc(m.id)" [disabled]="!selectedDoc">
+                <mat-icon>cloud_upload</mat-icon> Upload Doc
+              </button>
+            </div>
+
+            <!-- VIDEO -->
+            <h4>🎥 Upload Video</h4>
+            <div class="upload-section">
+              <input type="file" #videoInput (change)="onVideoSelected($event)" style="display: none">
+              <button mat-raised-button (click)="videoInput.click()">
+                <mat-icon>movie</mat-icon> Choisir vidéo
+              </button>
+              <span *ngIf="selectedVideoName" class="file-name">{{ selectedVideoName }}</span>
+              <button mat-raised-button color="accent" (click)="uploadVideo(m.id)" [disabled]="!selectedVideo">
+                <mat-icon>cloud_upload</mat-icon> Upload Video
+              </button>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <button mat-raised-button color="warn" (click)="deleteModule(m.id)">
+              <mat-icon>delete</mat-icon> Supprimer Module
+            </button>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </mat-step>
+
+    <!-- STEP 3: Confirmation -->
+    <mat-step>
+      <ng-template matStepLabel>Confirmation</ng-template>
+
+      <div class="step-content">
+        <h3>Récapitulatif</h3>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-icon mat-card-avatar>school</mat-icon>
+            <mat-card-title>Formation sélectionnée</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p *ngIf="selectedFormation">
+              <strong>{{ selectedFormation.titre }}</strong><br>
+              {{ selectedFormation.description }}
+            </p>
+            <p *ngIf="!selectedFormation">Aucune formation sélectionnée</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-icon mat-card-avatar>list_alt</mat-icon>
+            <mat-card-title>Modules ({{ modules.length }})</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-list-item *ngFor="let m of modules">
+                <mat-icon mat-list-icon>check_circle</mat-icon>
+                <div mat-line>{{ m.titre }}</div>
+                <div mat-line class="module-description">{{ m.description | slice:0:80 }}</div>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+
+        <div class="button-group">
+          <button mat-button matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="primary" (click)="finalize()">
+            <mat-icon>check_circle</mat-icon> Terminer
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+  </mat-stepper>
+</div>

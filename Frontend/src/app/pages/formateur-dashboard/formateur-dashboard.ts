@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../auth/service/auth';
 import { FormateurService } from '../../services/formateur';
 
 @Component({
@@ -56,7 +56,7 @@ export class FormateurDashboard implements OnInit {
 
   }
 
-  
+
   logout(): void {
     this.authService.logout();
   }
